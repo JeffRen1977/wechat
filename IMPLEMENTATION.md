@@ -518,9 +518,52 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 **5.1 单链路测试**
 
-- 在 OpenClaw 中对该 Agent 发送一条消息，例如：
-  - “只做一篇：医疗 AI。从搜索开始，选一篇论文，抓取或下载，解析，拟题，写一篇 1500 字文章保存到 wechat_factory/04_output/$(date +%Y-%m-%d)/MED_article.md。”
-- 检查：该日期目录下是否出现 `MED_article.md`，内容是否完整、符合风格。
+目的：验证「感知 → 认知 → 创作 → 存储」全链路，**只做单领域单篇**，便于快速定位问题。对应 Part C 的 C.2。
+
+**前置条件**
+
+- Phase 0～4 已完成：OpenClaw 可启动，workspace 指向本项目目录（含 `wechat_factory/`），工具已开放（如 `group:fs`、`group:web`、`browser` 等）。
+- `02_knowledge_base`、`03_templates` 已填充（见 4.4）；`04_output`、`05_assets` 目录存在（可为空）。
+
+**操作步骤**
+
+1. **启动 OpenClaw**  
+   在终端启动 Gateway/Agent（如 `openclaw gateway start` 或按你本地方式），并打开与**默认 Agent** 的对话界面。
+
+2. **发送单链路指令**  
+   在对话中输入下面**其中一条**（可复制，日期按当天替换；路径为相对 workspace 根）：
+
+   - **医疗 AI（推荐先测）**  
+     ```text
+     只做一篇：医疗 AI。从搜索开始，选一篇近期（过去 7 天）的高质量论文或报道，抓取或下载到 01_sources，解析内容，拟一个吸引人的标题（可参考 wechat_factory/03_templates/viral_titles.txt），写一篇 1500 字左右的文章，保存到 wechat_factory/04_output/$(date +%Y-%m-%d)/MED_article.md。请遵循 wechat_factory/03_templates/article_style.md 的格式。
+     ```
+   - **金融 AI**  
+     ```text
+     只做一篇：金融 AI。从搜索开始，选一篇近期金融/量化/NLP 相关论文或报告，抓取或下载到 01_sources，解析后拟题并撰写约 1500 字文章，保存到 wechat_factory/04_output/$(date +%Y-%m-%d)/FIN_article.md。格式遵循 wechat_factory/03_templates/article_style.md。
+     ```
+   - **教育 AI**  
+     ```text
+     只做一篇：教育 AI。从搜索开始，选一篇教育/学习分析/ITS 相关论文或报道，抓取到 01_sources，解析后拟题并撰写约 1500 字文章，保存到 wechat_factory/04_output/$(date +%Y-%m-%d)/EDU_article.md。格式遵循 wechat_factory/03_templates/article_style.md。
+     ```
+
+   **说明**：若在 Cursor/终端里复制，`$(date +%Y-%m-%d)` 会被 shell 展开为当天日期；若在 OpenClaw 网页输入框里粘贴，Agent 通常能理解“今天”并生成对应日期目录。为保险起见，可把 `$(date +%Y-%m-%d)` 直接改成具体日期，如 `2026-03-15`。
+
+3. **观察 Agent 行为**  
+   Agent 应按顺序：**搜索**（如 24h 内医疗 AI 论文）→ **选一篇** → **抓取/下载**（保存到 `01_sources/papers_pdf/` 或 `01_sources/web_snapshots/`）→ **解析**（摘要/结论）→ **拟题**（可参考 `viral_titles.txt`）→ **撰稿** → **写入** `04_output/YYYY-MM-DD/` 下对应 `MED_article.md`（或 FIN/EDU）。若某步失败，Agent 可能重试或报错；记下失败步骤便于做 5.2 工具级测试。
+
+4. **验收检查**  
+   - **路径**：`wechat_factory/04_output/YYYY-MM-DD/` 下存在 `MED_article.md`（或 FIN/EDU）。
+   - **内容**：打开文件，确认约 1500 字、单 H1、H2/H3 结构、段落与引用符合 `article_style.md`；标题与正文风格可参考 `viral_titles.txt` 与知识库。
+   - **可选**：若配置了图像生成，检查 `05_assets/images/` 是否有对应封面；正文中是否引用了 `02_knowledge_base` 的术语或趋势。
+
+5. **（可选）更新知识库**  
+   若希望后续去重：把本次解析的论文按「日期 | 标题 | 来源」追加到 `02_knowledge_base/medical_ai.md`（或 finance/edu）的「已解析论文」列表。
+
+**若未产出文件**
+
+- 先确认 workspace 是否为项目根（即包含 `wechat_factory/`）；若 workspace 是别的目录，路径需相应调整或在该目录下建立 `wechat_factory` 结构。
+- 再按 **5.2** 做工具级测试：分别验证搜索、抓取、写文件等是否可用，定位是搜索无结果、抓取失败、还是写盘权限/路径错误。
+- 查看 Agent 对话中的报错或工具返回；若为「无合适论文」，可放宽时间范围（如过去 30 天）或换一个领域重试。
 
 **5.2 工具级测试**
 
