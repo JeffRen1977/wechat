@@ -243,45 +243,26 @@
 
 | Step | Action | Purpose |
 |------|--------|---------|
-| 2.1 | 在 `~/.openclaw/openclaw.json` 中配置 `mcpServers`（见 Part B） | 为 Agent 提供搜索、浏览器、PDF、文件、图像等能力 |
+| 2.1 | 在 `~/.openclaw/openclaw.json` 中仅配置 `tools`（不添加 `mcpServers`），见下方 2.1 详细 | 为 Agent 提供搜索、文件、浏览器等内置能力 |
 | 2.2 | 在 workspace 的 `TOOLS.md` 中列出本项目会用到的工具及用途（给 Agent 看的说明） | 引导 Agent 在正确场景调用正确工具 |
 | 2.3 | 可选：在 `workspace/skills/` 下为 wechat 流水线写专用 Skill（如 `wechat-daily-editor`），在 SKILL.md 中引用 MCP 工具与步骤 | 把「每日 5 篇」流程固化为可复用技能 |
-| 2.4 | 重启 Gateway，执行 `openclaw mcp list` 校验 MCP 连接 | 确保工具在运行时可用 |
+| 2.4 | 重启 Gateway；若已配置 MCP，执行 `openclaw mcp list` 校验；否则确认 `tools.allow` 含 `group:web` 等即可 | 确保工具在运行时可用 |
 
 #### Phase 2 详细设置
 
-**2.1 编辑 ~/.openclaw/openclaw.json，添加 mcpServers**
+**2.1 编辑 ~/.openclaw/openclaw.json，仅配置 tools（不添加 mcpServers）**
 
-**免费搜索选项（无需 API Key）：**
+当前我们**已移除** `mcpServers`：OpenClaw 2026.3.13 不识别顶层键 `mcpServers`，会报 `Unrecognized key: "mcpServers"` 并拒绝启动，因此**不要在** openclaw.json 中添加 `mcpServers`。只配置 **tools**，使用内置能力即可。
 
-- **OpenClaw 内置**：若 `tools.allow` 包含 `group:web`，则已有 `web_search`、`web_fetch`，可直接用，无需额外 MCP。
-- **DuckDuckGo MCP（推荐）**：使用 `@oevortex/ddg_search`，无需 API Key，运行 `npx -y @oevortex/ddg_search@latest` 即可。下方示例用 `duckduckgo-search` 替代 Brave。
+**本方案使用：**
 
-在配置文件中加入或合并以下块（路径请按你的环境替换；**勿将真实 API Key 提交到 Git**）：
+- **搜索**：内置 `group:web` → `web_search`、`web_fetch`（免费，无需 API Key）。
+- **文件与运行**：`group:fs`、`group:runtime`、`browser`，由 OpenClaw 自带。
+
+在配置文件中**仅**加入或合并以下 `tools` 块（勿添加 `mcpServers`）：
 
 ```json
 {
-  "mcpServers": {
-    "duckduckgo-search": {
-      "command": "npx",
-      "args": ["-y", "@oevortex/ddg_search@latest"],
-      "transport": "stdio"
-    },
-    "filesystem": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "/home/renjeff/Documents/projects/wechat/wechat_factory"
-      ],
-      "transport": "stdio"
-    },
-    "puppeteer": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
-      "transport": "stdio"
-    }
-  },
   "tools": {
     "profile": "coding",
     "allow": ["group:fs", "group:web", "group:runtime", "browser"]
@@ -291,11 +272,12 @@
 
 说明：
 
-- **搜索**：`duckduckgo-search` 免费、无需 API Key。若需 Brave/Google，可改为 `brave-search` 或 `google-search` MCP，并配置对应 Key。
-- `filesystem` 的第三个参数必须是**绝对路径**，指向你的 `wechat_factory` 目录（或 workspace 根，再在 TOOLS.md 中约定子路径）。
-- **Google Search MCP**：若需 Google 检索，在 `mcpServers` 中增加一条，例如 `"google-search": { "command": "npx", "args": ["-y", "<package-name>"], "env": { "GOOGLE_API_KEY": "" }, "transport": "stdio" }`；具体包名与 env 以 npm 页面为准（如 `@modelcontextprotocol/server-google-search` 或等效）。
-- **PDF**：若没有现成 PDF MCP，用 `exec`/`bash` 调用项目内 `scripts/extract_pdf_text.sh <path-to-pdf>`，再对 stdout 做总结；见下方 2.3 可选脚本。
-- **Image Gen**：若需自动生成封面，可增加 DALL·E 或 Flux 的 MCP（如 `@modelcontextprotocol/server-dalle` 或社区 flux-mcp），在 `mcpServers` 中配置对应 `command`/`args`/`env`，并在 TOOLS.md 中说明输出目录为 `wechat_factory/05_assets/images/`。
+- **group:fs**：读写 workspace（含 wechat_factory）。
+- **group:web**：`web_search`、`web_fetch`，用于查论文与抓取页面。
+- **group:runtime**：`exec`/`bash`，用于运行 `scripts/extract_pdf_text.sh` 等。
+- **browser**：内置浏览器工具，抓取网页。
+- **PDF**：无 PDF MCP 时，用 `bash` 调用 `scripts/extract_pdf_text.sh <path-to-pdf>`，再对 stdout 做总结；见 2.3。
+- **若将来你的 OpenClaw 版本支持** `mcpServers`，可再按 Part E 的示例添加 DuckDuckGo、filesystem、puppeteer 等（可选）。
 
 **2.2 编写 workspace/TOOLS.md（给 Agent 看的工具说明）**
 
@@ -368,14 +350,13 @@
   ```
  安装依赖：`sudo apt install poppler-utils`（或 macOS: `brew install poppler`）。Agent 可用 `exec`/`bash` 调用此脚本，再对 stdout 做总结。
 
-**2.4 重启并校验 MCP**
+**2.4 重启并校验**
 
 ```bash
 openclaw gateway restart
-openclaw mcp list
 ```
 
-预期看到 `brave-search`、`filesystem`、`puppeteer` 等（视你配置的 server 而定）。若有报错，查看 Gateway 日志。
+若你的版本支持并在 openclaw.json 中配置了 `mcpServers`，再执行 `openclaw mcp list`，预期看到 `duckduckgo-search`、`filesystem`、`puppeteer` 等。若版本不支持 `mcpServers`（如 2026.3.13），则跳过 mcp list，确认 `tools.profile` / `tools.allow` 含 `group:web`、`group:fs`、`browser` 等即可。若有报错，查看 Gateway 日志。
 
 ---
 
@@ -723,11 +704,18 @@ You run the "AI 行业前哨" wechat_factory pipeline. Output 5 articles per day
 
 ## Part E: MCP Server 配置示例（openclaw.json 片段）
 
+**注意：** 仅当你的 OpenClaw 版本**支持**顶层键 `mcpServers` 时使用；否则会报 `Unrecognized key: "mcpServers"` 并导致 Gateway 无法启动（见 2.1 版本说明）。
+
 以下为**示例结构**，实际包名与参数以官方文档为准。请勿将 API Key 写进版本库。
 
 ```json
 {
   "mcpServers": {
+    "duckduckgo-search": {
+      "command": "npx",
+      "args": ["-y", "@oevortex/ddg_search@latest"],
+      "transport": "stdio"
+    },
     "brave-search": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-brave-search"],
@@ -749,7 +737,7 @@ You run the "AI 行业前哨" wechat_factory pipeline. Output 5 articles per day
 
 说明：
 
-- **brave-search**：提供实时搜索，对应 Part B 的 Deep Search。
+- **duckduckgo-search**：免费搜索，无需 API Key；**brave-search**：需 Brave API Key，对应 Part B 的 Deep Search。
 - **filesystem**：将 MCP 文件操作限定到 `wechat_factory`，对应 Part B 的 Filesystem。
 - **browser**：若为 OpenClaw 内置，无需在 mcpServers 中配置；若用 Puppeteer/Playwright MCP，需再加一条 server。
 - **PDF / Image Gen**：需按你实际采用的 MCP 包名与参数补充到 `mcpServers`。
