@@ -19,5 +19,10 @@
 - **Create** daily folder: `wechat_factory/04_output/$(date +%Y-%m-%d)/`.
 - **Do not** delete or overwrite `02_knowledge_base` or `03_templates`.
 
+## Ollama (local, optional)
+- Use for **initial translation or dedup** of non-Chinese abstracts before sending to the main model (saves API cost). Call via `bash`: `scripts/ollama-translate.sh "English abstract text"` or pipe text into it.
+- Model: default `llama3.3:70b`; override with `OLLAMA_MODEL=qwen2.5:7b` etc. if needed. Ensure the model is pulled: `ollama pull llama3.3:70b`.
+- When to use: for non-Chinese paper abstracts, run through this script first, then pass the Chinese result to the main model for polish and article drafting.
+
 ## Image Gen (if configured)
 - Generate one cover image per article from title/abstract. Save to `wechat_factory/05_assets/images/` with name like `YYYY-MM-DD_MED_cover.png`.

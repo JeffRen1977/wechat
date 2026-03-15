@@ -91,12 +91,12 @@
     ```
   - 拉取模型（用于初筛/翻译）：
     ```bash
-    ollama pull qwen2.5:7b
-    # 或 ollama pull llama3.3:70b（按机器配置选择）
+    ollama pull llama3.3:70b
+    # 或 ollama pull qwen2.5:7b（机器资源较小时）
     ```
   - 验证：
     ```bash
-    ollama run qwen2.5:7b "Translate to Chinese: Hello world"
+    ollama run llama3.3:70b "Translate to Chinese: Hello world"
     ```
 
 **Agent 配置说明（单 Agent vs 多 Agent）**
@@ -433,11 +433,15 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 **4.1 Ollama（已在 Phase 0 提及，此处补充调用方式）**
 
-- 在 Agent 指令或 Skill 中可约定：对“候选摘要列表”先调用本地 Ollama 做翻译或去重，再把结果交给 Claude 润色。示例（在 bash 中测试）：
+- 项目内已提供 **`scripts/ollama-translate.sh`**：对英文摘要先经本地 Ollama 翻译成中文，再交给主模型润色，以降低成本。用法：
   ```bash
-  ollama run qwen2.5:7b "将以下英文摘要翻译为中文：<paste abstract>"
+  echo "English abstract..." | ./scripts/ollama-translate.sh
+  # 或
+  ./scripts/ollama-translate.sh "English abstract..."
   ```
-- 若通过 OpenClaw 的 `exec`/`bash` 调用，需在 INSTRUCTIONS 或 TOOLS.md 中写明：何时用 Ollama（例如“对非中文摘要先调用 ollama 翻译”）。
+  默认模型为 `llama3.3:70b`；可设置 `OLLAMA_MODEL=qwen2.5:7b` 等覆盖。使用前需已拉取模型：`ollama pull llama3.3:70b`。
+- **TOOLS.md** 已说明：对非中文摘要可先通过 `scripts/ollama-translate.sh` 翻译，再将中文结果交给主模型撰稿。
+- 在 Agent 或 Skill 中约定：对候选摘要列表中的英文内容先调用此脚本（通过 `bash`），再对译文进行润色与扩写。
 
 **4.2 Pandoc / Markdown-to-WeChat 脚本**
 
