@@ -217,7 +217,7 @@
   ```markdown
   # Agents in this workspace
 
-  - **wechat-editor**: Runs the daily wechat_factory pipeline (5 articles). Workspace paths are relative to this directory; output goes to `wechat_factory/04_output/YYYY-MM-DD/`.
+  - **main** (default agent): Runs the daily wechat_factory pipeline (5 articles). Workspace paths are relative to this directory; output goes to `wechat_factory/04_output/YYYY-MM-DD/`.
   ```
 
 - **SOUL.md**（Agent 人格与行为边界，可按需精简）：
@@ -362,89 +362,51 @@ openclaw gateway restart
 
 ### Phase 3: Agent 指令与每日流程
 
+**当前实现：单 Agent（main）**，无需单独的 wechat-editor 或 `agents.list`。workspace 指向 wechat 项目，每日流程由 workspace 内的 AGENTS.md、SOUL.md 与 skills/wechat-daily-editor 提供。
+
 | Step | Action | Purpose |
 |------|--------|---------|
-| 3.1 | 为负责「公众号内容」的 Agent 创建或指定目录（如 `~/.openclaw/agents/wechat-editor/`） | 独立身份、workspace、记忆 |
-| 3.2 | 在该 Agent 的 `INSTRUCTIONS.md`（或等价指令文件）中写入 DESIGN.md 第 6 节的「每日动作清单」 | 驱动扫描→研读→拟题→撰稿→归档→配图 |
-| 3.3 | 将该 Agent 的 `workspace` 指向包含 `wechat_factory` 的目录 | 保证读写路径一致 |
-| 3.4 | 配置 Cron 或 OpenClaw 内置调度，每日定时触发该 Agent 的「执行今日任务」 | 自动化日更 |
+| 3.1 | 确认 `agents.defaults.workspace` 指向 wechat 项目目录（见 3.1 详细） | 默认 Agent 的工作目录含 wechat_factory |
+| 3.2 | 每日动作清单已写在 workspace 的 **AGENTS.md**、**SOUL.md** 及 **skills/wechat-daily-editor/SKILL.md** | 驱动扫描→研读→拟题→撰稿→归档→配图 |
+| 3.3 | 不添加 `agents.list`；不创建 `~/.openclaw/agents/wechat-editor/` | 与 OpenClaw 2026.3.13 兼容，避免未支持的 instructions 等键 |
+| 3.4 | 配置 Cron 或 OpenClaw 内置调度，每日触发**默认 Agent** 执行今日任务 | 自动化日更 |
 
 #### Phase 3 详细设置
 
-**3.1 创建 wechat-editor Agent 目录**
+**3.1 确认 workspace（单 Agent）**
 
-OpenClaw 的 Agent 配置方式：**单 Agent** 时仅用 `agents.defaults`（无需 `list`）；**多 Agent** 时在 `openclaw.json` 的 `agents.list` 中为每个 Agent 指定 `id`、`workspace` 等。也可用 CLI 添加：`openclaw agents add wechat-editor`。若你手动创建 agent 目录（例如放 INSTRUCTIONS.md）：
-
-```bash
-mkdir -p ~/.openclaw/agents/wechat-editor
-```
-
-**3.2 编写 INSTRUCTIONS.md**
-
-在 `~/.openclaw/agents/wechat-editor/` 下创建 `INSTRUCTIONS.md`（或你的 OpenClaw 版本所识别的指令文件名，如 `SYSTEM.md`）：
-
-```markdown
-# Wechat Editor Agent — Daily Pipeline
-
-## Role
-You run the "AI 行业前哨" wechat_factory pipeline. Output 5 articles per day (Medical, Finance, Education + 2 more domains as configured).
-
-## Daily Steps (run in order)
-
-1. **Scan**
-   - Use Deep Search (brave_search / web_search) to find in the **past 24 hours**: high-impact papers or news in [Medical AI], [Finance AI], [Education AI] (and two other domains).
-   - Prefer: Nature, Lancet, Nature Medicine, arXiv, PubMed, top venues.
-
-2. **Fetch & Read**
-   - Download or open each selected link. Save PDFs to `wechat_factory/01_sources/papers_pdf/`, or save page content to `wechat_factory/01_sources/web_snapshots/`.
-   - Use PDF Parser (or `scripts/extract_pdf_text.sh` + summarize) to get: abstract, key methods, results, conclusion. Compare with `wechat_factory/02_knowledge_base/<domain>_ai.md` for novelty.
-
-3. **Title**
-   - Read `wechat_factory/03_templates/viral_titles.txt`. Generate 5 candidate titles per article, pick the best one for click-through.
-
-4. **Draft**
-   - Style: like 机器之心. Length: 1500–2000 characters. Format: Markdown per `wechat_factory/03_templates/article_style.md`.
-   - Write one article per domain.
-
-5. **Save**
-   - Ensure folder exists: `wechat_factory/04_output/YYYY-MM-DD/` (today’s date).
-   - Write: `MED_article.md`, `FIN_article.md`, `EDU_article.md`, and two more (e.g. `TECH_article.md`, `POLICY_article.md`).
-
-6. **Cover (optional)**
-   - For each article, use Image Gen to create a cover from title/abstract; save to `wechat_factory/05_assets/images/` with name `YYYY-MM-DD_<DOMAIN>_cover.png`.
-
-## Rules
-- Do not delete or overwrite `02_knowledge_base` or `03_templates`.
-- If a PDF cannot be parsed, use the web snapshot content instead.
-- Use TOOLS.md in the workspace for tool names and paths.
-```
-
-**3.3 在 openclaw.json 中绑定 workspace**
-
-在 `~/.openclaw/openclaw.json` 中为该 Agent 指定 workspace：**单 Agent** 时只改 `agents.defaults.workspace`；**多 Agent** 时在 `agents.list` 中增加一条，例如：
+在 `~/.openclaw/openclaw.json` 中确保 **仅**使用 `agents.defaults`，**不要**添加 `agents.list`：
 
 ```json
 {
   "agents": {
-    "list": [
-      {
-        "id": "wechat-editor",
-        "name": "Wechat Editor",
-        "workspace": "/home/renjeff/Documents/projects/wechat",
-        "instructions": "~/.openclaw/agents/wechat-editor/INSTRUCTIONS.md"
-      }
-    ]
+    "defaults": {
+      "workspace": "/home/renjeff/Documents/projects/wechat",
+      "model": { "primary": "openai/gpt-5.1-codex" }
+    }
   }
 }
 ```
 
-若 OpenClaw 通过文件路径加载指令，可能只需 `instructions` 指向上述文件；若通过 UI 或其它键名加载，请以官方文档为准。
+workspace 即 wechat 项目根，内含 **AGENTS.md**、**SOUL.md**、**TOOLS.md**、`wechat_factory/`、`skills/wechat-daily-editor/` 等。OpenClaw 默认 Agent（main）以此为工作目录，并从此处加载上述引导文件与技能。
+
+**3.2 每日流程来源**
+
+- **AGENTS.md**：说明本 workspace 用于 wechat_factory，输出到 `wechat_factory/04_output/YYYY-MM-DD/`。
+- **SOUL.md**：约束 Agent 专注流水线、不删除 knowledge_base/templates、参考 TOOLS.md。
+- **skills/wechat-daily-editor/SKILL.md**：当用户说「执行今日公众号任务」或「run today's wechat pipeline」时，按步骤执行扫描→抓取→拟题→撰稿→保存（详见该文件）。
+
+无需在 `~/.openclaw/agents/` 下创建 wechat-editor 或 INSTRUCTIONS.md。
+
+**3.3 为何不用 wechat-editor（可选阅读）**
+
+OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Agent 已能满足「一个 workspace 跑 wechat 流水线」的需求，因此当前实现不创建 `~/.openclaw/agents/wechat-editor/`，也不配置 `agents.list`。若后续版本支持多 Agent 且你需要独立 wechat-editor（如单独绑定通道），再按官方文档添加 `agents.list` 与对应目录。
 
 **3.4 配置 Cron 定时触发**
 
-- 假设 OpenClaw CLI 支持通过 agent id 发一条“执行今日任务”消息，可写成 cron（示例：每天 8:00 执行）：
+- 触发**默认 Agent**（无需指定 agent id），示例（每天 8:00）：
   ```bash
-  0 8 * * * OPENCLAW_AGENT=wechat-editor openclaw agent --message "执行今日公众号任务，产出 5 篇并保存到 04_output"
+  0 8 * * * openclaw agent --message "执行今日公众号任务，产出 5 篇并保存到 04_output"
   ```
   实际命令需根据 OpenClaw 的 CLI 用法调整（如 `openclaw run`、`openclaw chat` 等）。
 - 或使用 OpenClaw 自带的 **cron** 工具（若已启用）：在界面或配置中添加每日任务，消息内容同上。
@@ -631,7 +593,7 @@ You run the "AI 行业前哨" wechat_factory pipeline. Output 5 articles per day
 | **group:memory** | `memory_search`、`memory_get`：跨会话记忆，可存「已写过的选题」避免重复。 |
 | **browser** | 若未用独立 MCP，可用内置 browser 做简单网页抓取。 |
 
-在 `openclaw.json` 中可通过 `tools.profile: "coding"` 或 `tools.allow: ["group:fs", "group:web", "browser", ...]` 控制上述工具对 wechat-editor Agent 的可见性。
+在 `openclaw.json` 中可通过 `tools.profile: "coding"` 或 `tools.allow: ["group:fs", "group:web", "browser", ...]` 控制上述工具对默认 Agent 的可见性。
 
 ---
 
@@ -678,18 +640,18 @@ You run the "AI 行业前哨" wechat_factory pipeline. Output 5 articles per day
 
 ### D.2 多 Agent 分工（可选）
 
-- **wechat-editor**：专门执行「每日 5 篇」流程；绑定 Cron 或定时触发；工具开放 `group:fs`、`group:web`、browser、PDF、Image Gen、Search。
-- **support / 其他**：若存在，可限制为 `tools.profile: "messaging"` 等，避免误动 wechat_factory。
+- **当前实现**：单 Agent（main）专门执行「每日 5 篇」流程；绑定 Cron 或定时触发；工具开放 `group:fs`、`group:web`、browser 等。
+- **若日后用多 Agent**：可增加 wechat-editor，绑定 Cron 或通道；其他 Agent 可限制为 `tools.profile: "messaging"` 等，避免误动 wechat_factory。
 
 ### D.3 指令与记忆
 
-- **INSTRUCTIONS.md**：放入 DESIGN.md 第 6 节的每日动作清单；可追加「遇到 PDF 无法解析时改用 web_snapshots」「标题从 viral_titles.txt 中选型」等规则。
+- **每日流程**：当前写在 workspace 的 **AGENTS.md**、**SOUL.md** 与 **skills/wechat-daily-editor/SKILL.md**；可追加「遇到 PDF 无法解析时改用 web_snapshots」「标题从 viral_titles.txt 中选型」等规则。
 - **MEMORY.md / memory/YYYY-MM-DD.md**：记录已选题、已写标题，配合 `memory_search` 做去重与连续性。
 - **TOOLS.md**：如上 Part B，用自然语言描述每个工具在本项目中的用途与路径约定，减少 Agent 误用。
 
 ### D.4 定时运行方式
 
-- **方式 1**：系统 Cron 调用 OpenClaw CLI，例如每日 8:00 执行一次「wechat-editor 执行今日任务」。
+- **方式 1**：系统 Cron 调用 OpenClaw CLI，例如每日 8:00 执行一次「默认 Agent 执行今日任务」（无需指定 agent id）。
 - **方式 2**：OpenClaw 的 `cron` 工具（若已启用）在网关内配置每日任务，触发对应 Agent。
 - **方式 3**：外部调度器（如 GitHub Actions、Jenkins）在指定时间调用 OpenClaw API 或 CLI。
 
