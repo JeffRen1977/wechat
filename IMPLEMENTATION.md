@@ -467,6 +467,22 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
   ```
   chmod +x scripts/md2wechat.sh。公众号后台可复制 `OUT/*.html` 内容粘贴（或再经一次样式内联工具）。
 
+**4.2b 带图、正确排版并存入公众号草稿箱**
+
+目标：内容**带封面图与配图**、**正确排版**，并自动**存入微信公众平台草稿箱**（详见 [PUBLISHING.md](./PUBLISHING.md)）。
+
+- 流水线需确保每篇文章在 `05_assets/images/` 下有对应封面（如 `YYYY-MM-DD_MED_cover.png`），并在撰稿步骤中引用；正文内配图可选。
+- 使用 **`scripts/wechat-draft-upload.sh [YYYY-MM-DD]`**：读取 `04_output/YYYY-MM-DD/` 下 Markdown 与 `05_assets/images/` 下封面，将 MD 转为 HTML，上传封面为永久素材，调用微信「新增草稿」接口写入草稿箱。
+- **依赖**：`curl`、`jq`、`pandoc`。**凭证**：环境变量 `WECHAT_APPID` + `WECHAT_SECRET`，或直接设置 `WECHAT_ACCESS_TOKEN`（勿提交到 Git）。
+- 使用示例：
+  ```bash
+  export WECHAT_APPID=your_appid
+  export WECHAT_SECRET=your_secret
+  ./scripts/wechat-draft-upload.sh    # 上传当日
+  # 或 ./scripts/wechat-draft-upload.sh 2026-03-15
+  ```
+  成功后可在公众平台后台「草稿箱」中查看、编辑后群发或发布。
+
 **4.3 Cron：OpenClaw + Git 提交**
 
 - 编辑 crontab：`crontab -e`
