@@ -6,6 +6,10 @@
 
 ## Part A: Implementation Phases (Step-by-Step)
 
+以下每个 Phase 都附带**详细设置步骤**与**可复制执行的命令/代码**。
+
+---
+
 ### Phase 0: Prerequisites
 
 | Step | Action | Purpose |
@@ -13,6 +17,145 @@
 | 0.1 | 安装并配置 OpenClaw（Gateway + 至少一个 Agent） | 多智能体运行环境 |
 | 0.2 | 准备 Claude API（或兼容端点）与 Ollama 本地 | 认知/创作用云端模型 + 初筛/翻译用本地模型 |
 | 0.3 | 初始化 Git 仓库于 `wechat/` 或 `~/.openclaw/workspace`（若 workspace 指向此处） | 版本控制与回滚 |
+
+#### Phase 0 详细设置
+
+**0.1 安装 OpenClaw**
+
+- 安装方式（任选其一）：
+  - **npm（全局）：**
+    ```bash
+    npm install -g openclaw
+    ```
+  - **从源码：**
+    ```bash
+    git clone https://github.com/openclaw/openclaw.git
+    cd openclaw && npm install && npm run build
+    ```
+- 初始化配置与 workspace：
+  ```bash
+  openclaw setup
+  # 或按提示：openclaw onboard / openclaw configure
+  ```
+- 确认 Gateway 可启动：
+  ```bash
+  openclaw gateway start
+  # 或 openclaw start（视版本而定）
+  ```
+- **单 Agent（默认）**：无需 `agents.list`。OpenClaw 使用 `agents.defaults`，默认 agentId 为 `main`，workspace 取 `agents.defaults.workspace`（你已设为 wechat 目录）。
+- **多 Agent**：在 `~/.openclaw/openclaw.json` 中增加 `agents.list` 数组，至少保留一个 Agent；每个元素需有 `id`、`workspace`，可指定其一为 `default: true`。见下方「Agent 配置说明」。
+
+**0.2 云端模型 API（OpenAI / Gemini / Claude）与 Ollama**
+
+可使用 **OpenAI**、**Google Gemini** 或 Claude 作为主模型。**安全**：一律用环境变量或 `~/.openclaw/.env` 存 Key，不要写进 `openclaw.json` 或提交到 Git；若 Key 曾泄露，请到对应控制台轮换。
+
+- **OpenAI：**
+  - 在 `~/.openclaw/openclaw.json` 的 `auth.profiles` 中已有 `openai:default` 时，Key 可通过环境变量或 `~/.openclaw/credentials/` 提供（具体以 OpenClaw 文档为准）。
+  - 环境变量方式（推荐）：
+    ```bash
+    export OPENAI_API_KEY="sk-proj-..."
+    ```
+  - 在 `agents.defaults.model.primary` 中指定模型，例如：`"openai/gpt-5.1-codex"` 或 `"openai/gpt-4o"`。
+
+- **Google Gemini：**
+  - 从 [Google AI Studio](https://aistudio.google.com/) 获取 API Key，用环境变量：
+    ```bash
+    export GEMINI_API_KEY="AIza..."
+    # 或部分版本使用：export GOOGLE_API_KEY="AIza..."
+    ```
+  - 在 `openclaw.json` 中配置 Google provider（若尚未配置），并将默认模型改为 Gemini，例如：
+    ```json
+    "agents": {
+      "defaults": {
+        "model": { "primary": "google/gemini-2.0-flash" }
+      }
+    }
+    ```
+  - 常见模型名：`google/gemini-2.0-flash`、`google/gemini-1.5-pro`、`google/gemini-1.5-flash`。
+
+- **Claude（可选）：**
+  - 若使用 Anthropic，设置 `export ANTHROPIC_API_KEY="sk-ant-..."`，并在配置中指定 `anthropic/claude-sonnet-4-5` 等。
+
+- **可选：一次设置多个 Key（`.env`）**  
+  在 `~/.openclaw/.env` 中写（勿提交到 Git，`chmod 600 ~/.openclaw/.env`）：
+  ```bash
+  OPENAI_API_KEY=sk-proj-...
+  GEMINI_API_KEY=AIza...
+  ```
+  OpenClaw 若支持从该文件加载，启动时会自动注入；否则在 shell 配置（如 `~/.bashrc`）里 `export` 上述变量。
+
+- **Ollama（本地，用于初筛/翻译）：**
+  - 安装：
+    ```bash
+    curl -fsSL https://ollama.com/install.sh | sh
+    ```
+  - 拉取模型（用于初筛/翻译）：
+    ```bash
+    ollama pull qwen2.5:7b
+    # 或 ollama pull llama3.3:70b（按机器配置选择）
+    ```
+  - 验证：
+    ```bash
+    ollama run qwen2.5:7b "Translate to Chinese: Hello world"
+    ```
+
+**Agent 配置说明（单 Agent vs 多 Agent）**
+
+- **仅用默认一个 Agent（当前推荐）**：不写 `agents.list`，只保留 `agents.defaults`。例如你当前配置：
+  ```json
+  "agents": {
+    "defaults": {
+      "workspace": "/home/renjeff/Documents/projects/wechat",
+      "model": { "primary": "openai/gpt-5.1-codex" }
+    }
+  }
+  ```
+  此时 OpenClaw 使用 agentId `main`，workspace 即 wechat 目录；无需再配 `agents.list`。
+
+- **多 Agent（例如再增加 wechat-editor）**：增加 `agents.list`，并可选 `bindings` 做路由。示例：
+  ```json
+  "agents": {
+    "defaults": {
+      "workspace": "/home/renjeff/.openclaw/workspace",
+      "model": { "primary": "openai/gpt-5.1-codex" }
+    },
+    "list": [
+      {
+        "id": "main",
+        "default": true,
+        "workspace": "/home/renjeff/.openclaw/workspace"
+      },
+      {
+        "id": "wechat-editor",
+        "name": "Wechat Editor",
+        "workspace": "/home/renjeff/Documents/projects/wechat"
+      }
+    ]
+  }
+  ```
+  至少保留一个 Agent；若需把某通道/账号绑定到 wechat-editor，再在顶层增加 `bindings`（见 [OpenClaw Multi-Agent](https://docs.openclaw.ai/concepts/multi-agent)）。
+
+**0.3 Git 仓库**
+
+- 若 workspace 即为本 wechat 项目目录（推荐，即 `/home/renjeff/Documents/projects/wechat`）：
+  ```bash
+  cd /home/renjeff/Documents/projects/wechat
+  git init
+  git add . && git commit -m "Initial commit"
+  git remote add origin https://github.com/JeffRen1977/wechat.git
+  git push -u origin main
+  ```
+- 若 workspace 为 `~/.openclaw/workspace`（需先将 wechat_factory 复制或软链到该目录）：
+  ```bash
+  cd ~/.openclaw/workspace
+  git init
+  git add AGENTS.md SOUL.md TOOLS.md wechat_factory/ memory/ 2>/dev/null || true
+  git add -A && git commit -m "Add workspace and wechat_factory"
+  git remote add origin <your-private-repo-url>
+  git push -u origin main
+  ```
+
+---
 
 ### Phase 1: Workspace & wechat_factory 对接
 
@@ -23,6 +166,79 @@
 | 1.3 | 若 workspace 即 `wechat/`：则 `wechat_factory/` 已在项目内，无需迁移 | 开发与生产可共用同一目录 |
 | 1.4 | 在 workspace 根目录确保存在 `AGENTS.md`、`SOUL.md`、`TOOLS.md`（OpenClaw 约定） | 会话加载与工具可见性 |
 
+#### Phase 1 详细设置
+
+**1.1 确定 workspace 根目录**
+
+- 查看当前配置：
+  ```bash
+  cat ~/.openclaw/openclaw.json | grep -A2 workspace
+  ```
+- 常见两种选择：
+  - **A**：`~/.openclaw/workspace`（OpenClaw 默认）
+  - **B**：项目目录，例如 `/home/renjeff/Documents/projects/wechat`
+- 若选 B，在 `openclaw.json` 中设置（具体键名以官方文档为准）：
+  ```json
+  {
+    "agent": { "workspace": "/home/renjeff/Documents/projects/wechat" }
+  }
+  ```
+  或对指定 Agent 设置：
+  ```json
+  {
+    "agents": {
+      "list": [
+        { "id": "wechat-editor", "workspace": "/home/renjeff/Documents/projects/wechat" }
+      ]
+    }
+  }
+  ```
+
+**1.2 将 wechat_factory 放入 ~/.openclaw/workspace（仅当 workspace 为 A 时）**
+
+- 复制（独立副本）：
+  ```bash
+  cp -r /home/renjeff/Documents/projects/wechat/wechat_factory ~/.openclaw/workspace/
+  ```
+- 或软链（与项目同步）：
+  ```bash
+  ln -s /home/renjeff/Documents/projects/wechat/wechat_factory ~/.openclaw/workspace/wechat_factory
+  ```
+
+**1.3 workspace 即 wechat 时**
+
+- 无需操作；Agent 工作目录已是 `wechat/`，相对路径 `wechat_factory/04_output/` 即项目内路径。
+
+**1.4 创建 OpenClaw 约定的 workspace 引导文件**
+
+在 **workspace 根目录**（即 `~/.openclaw/workspace` 或 `wechat/`）创建以下文件（若不存在）：
+
+- **AGENTS.md**（简要说明本 workspace 的 Agent 角色与 wechat 任务）：
+  ```markdown
+  # Agents in this workspace
+
+  - **wechat-editor**: Runs the daily wechat_factory pipeline (5 articles). Workspace paths are relative to this directory; output goes to `wechat_factory/04_output/YYYY-MM-DD/`.
+  ```
+
+- **SOUL.md**（Agent 人格与行为边界，可按需精简）：
+  ```markdown
+  # Soul
+
+  You are a content assistant for the wechat_factory pipeline. Stay on task: discover papers, extract insights, draft articles, and write to wechat_factory. Do not delete 02_knowledge_base or 03_templates. Use TOOLS.md for tool usage.
+  ```
+
+- **TOOLS.md**（本 Phase 可先写占位，Phase 2 会补全）：
+  ```markdown
+  # Tools for wechat_factory
+
+  - **Filesystem**: Read/write under `wechat_factory/`. Create `04_output/YYYY-MM-DD/`, write `MED_article.md` etc. Do not delete knowledge_base or templates.
+  - (Search, Browser, PDF, Image Gen will be documented in Phase 2.)
+  ```
+
+若 OpenClaw 已通过 `openclaw setup` 生成过这些文件，只需在原有基础上**追加** wechat 相关段落即可。
+
+---
+
 ### Phase 2: MCP Skills & Tools 配置
 
 | Step | Action | Purpose |
@@ -31,6 +247,132 @@
 | 2.2 | 在 workspace 的 `TOOLS.md` 中列出本项目会用到的工具及用途（给 Agent 看的说明） | 引导 Agent 在正确场景调用正确工具 |
 | 2.3 | 可选：在 `workspace/skills/` 下为 wechat 流水线写专用 Skill（如 `wechat-daily-editor`），在 SKILL.md 中引用 MCP 工具与步骤 | 把「每日 5 篇」流程固化为可复用技能 |
 | 2.4 | 重启 Gateway，执行 `openclaw mcp list` 校验 MCP 连接 | 确保工具在运行时可用 |
+
+#### Phase 2 详细设置
+
+**2.1 编辑 ~/.openclaw/openclaw.json，添加 mcpServers**
+
+在配置文件中加入或合并以下块（路径与 key 请按你的环境替换；**勿将真实 API Key 提交到 Git**）：
+
+```json
+{
+  "mcpServers": {
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": { "BRAVE_API_KEY": "<your-brave-api-key>" },
+      "transport": "stdio"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/renjeff/Documents/projects/wechat/wechat_factory"
+      ],
+      "transport": "stdio"
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "transport": "stdio"
+    }
+  },
+  "tools": {
+    "profile": "coding",
+    "allow": ["group:fs", "group:web", "group:runtime", "browser"]
+  }
+}
+```
+
+说明：
+
+- 将 `BRAVE_API_KEY` 改为环境变量更安全，例如在 shell 中 `export BRAVE_API_KEY=...`，并在 `env` 中写 `"BRAVE_API_KEY": "${BRAVE_API_KEY}"`（若 OpenClaw 支持环境变量展开）。
+- `filesystem` 的第三个参数必须是**绝对路径**，指向你的 `wechat_factory` 目录（或 workspace 根，再在 TOOLS.md 中约定子路径）。
+- 若使用 Google Search MCP，可增加一条 `"google-search": { ... }`，并到其 npm 页面查看所需 args/env。
+- PDF：若没有现成 PDF MCP，可先用 `exec`/`bash` 调用本地脚本（见下方 2.3 可选脚本）。
+- Image Gen：若有 DALL·E/Flux 的 MCP，再增加对应 server 配置。
+
+**2.2 编写 workspace/TOOLS.md（给 Agent 看的工具说明）**
+
+在 workspace 根目录的 `TOOLS.md` 中写入（或替换为）以下内容，便于 Agent 正确调用工具：
+
+```markdown
+# Tools for wechat_factory Pipeline
+
+## Deep Search (brave_search / web_search)
+- Use to find **latest AI papers** (past 24–48 hours). Prefer sources: Nature, Lancet, arXiv, PubMed.
+- Example intent: "Search for recent medical AI papers in Nature Medicine."
+
+## Web Browser (browser / puppeteer)
+- Use to **open a URL** and save full text or HTML to `wechat_factory/01_sources/web_snapshots/`.
+- Filename format: `YYYY-MM-DD_<domain>_<slug>.html` or `.txt`.
+
+## PDF Parser
+- Read PDFs from `wechat_factory/01_sources/papers_pdf/`. Extract in order: abstract → methods → results → conclusion.
+- If no PDF MCP is available, use `bash` to run: `scripts/extract_pdf_text.sh <path-to-pdf>` and then summarize the output.
+
+## Filesystem (read, write, edit / MCP filesystem)
+- **Read**: `wechat_factory/02_knowledge_base/*.md`, `wechat_factory/03_templates/*`.
+- **Write**: Save articles to `wechat_factory/04_output/YYYY-MM-DD/MED_article.md` (and FIN_, EDU_, etc.).
+- **Create** daily folder: `wechat_factory/04_output/$(date +%Y-%m-%d)/`.
+- **Do not** delete or overwrite `02_knowledge_base` or `03_templates`.
+
+## Image Gen (if configured)
+- Generate one cover image per article from title/abstract. Save to `wechat_factory/05_assets/images/` with name like `YYYY-MM-DD_MED_cover.png`.
+```
+
+**2.3 可选：workspace/skills/wechat-daily-editor 与 PDF 脚本**
+
+- 创建 Skill 目录：
+  ```bash
+  mkdir -p /home/renjeff/Documents/projects/wechat/skills/wechat-daily-editor
+  ```
+  若 workspace 是 `~/.openclaw/workspace`，则：
+  ```bash
+  mkdir -p ~/.openclaw/workspace/skills/wechat-daily-editor
+  ```
+
+- **skills/wechat-daily-editor/SKILL.md**：
+  ```markdown
+  ---
+  name: wechat_daily_editor
+  description: Run the daily wechat_factory pipeline: search → read → title → write → save (5 articles).
+  ---
+
+  # Wechat Daily Editor
+
+  When the user says "run today's wechat pipeline" or "执行今日公众号任务":
+  1. Create `wechat_factory/04_output/YYYY-MM-DD/` if not exists.
+  2. For each domain (MED, FIN, EDU, plus two more as configured): use Search to find one recent paper, fetch or download to 01_sources, parse (PDF or snapshot), then read 02_knowledge_base and 03_templates/viral_titles.txt and article_style.md, draft one article 1500–2000 chars, write to 04_output/YYYY-MM-DD/<DOMAIN>_article.md.
+  3. Optionally generate cover images to 05_assets/images/.
+  4. Do not delete 02_knowledge_base or 03_templates.
+  ```
+
+- **可选：本地 PDF 提取脚本**（当没有 PDF MCP 时，由 Agent 通过 `bash` 调用）。在项目内创建 `scripts/extract_pdf_text.sh`：
+  ```bash
+  #!/usr/bin/env bash
+  # Usage: ./scripts/extract_pdf_text.sh wechat_factory/01_sources/papers_pdf/paper.pdf
+  set -e
+  PDF="$1"
+  if ! command -v pdftotext &>/dev/null; then
+    echo "Install poppler-utils: sudo apt install poppler-utils"
+    exit 1
+  fi
+  pdftotext -layout -enc UTF-8 "$PDF" -
+  ```
+ 安装依赖：`sudo apt install poppler-utils`（或 macOS: `brew install poppler`）。Agent 可用 `exec`/`bash` 调用此脚本，再对 stdout 做总结。
+
+**2.4 重启并校验 MCP**
+
+```bash
+openclaw gateway restart
+openclaw mcp list
+```
+
+预期看到 `brave-search`、`filesystem`、`puppeteer` 等（视你配置的 server 而定）。若有报错，查看 Gateway 日志。
+
+---
 
 ### Phase 3: Agent 指令与每日流程
 
@@ -41,6 +383,89 @@
 | 3.3 | 将该 Agent 的 `workspace` 指向包含 `wechat_factory` 的目录 | 保证读写路径一致 |
 | 3.4 | 配置 Cron 或 OpenClaw 内置调度，每日定时触发该 Agent 的「执行今日任务」 | 自动化日更 |
 
+#### Phase 3 详细设置
+
+**3.1 创建 wechat-editor Agent 目录**
+
+OpenClaw 的 Agent 配置方式：**单 Agent** 时仅用 `agents.defaults`（无需 `list`）；**多 Agent** 时在 `openclaw.json` 的 `agents.list` 中为每个 Agent 指定 `id`、`workspace` 等。也可用 CLI 添加：`openclaw agents add wechat-editor`。若你手动创建 agent 目录（例如放 INSTRUCTIONS.md）：
+
+```bash
+mkdir -p ~/.openclaw/agents/wechat-editor
+```
+
+**3.2 编写 INSTRUCTIONS.md**
+
+在 `~/.openclaw/agents/wechat-editor/` 下创建 `INSTRUCTIONS.md`（或你的 OpenClaw 版本所识别的指令文件名，如 `SYSTEM.md`）：
+
+```markdown
+# Wechat Editor Agent — Daily Pipeline
+
+## Role
+You run the "AI 行业前哨" wechat_factory pipeline. Output 5 articles per day (Medical, Finance, Education + 2 more domains as configured).
+
+## Daily Steps (run in order)
+
+1. **Scan**
+   - Use Deep Search (brave_search / web_search) to find in the **past 24 hours**: high-impact papers or news in [Medical AI], [Finance AI], [Education AI] (and two other domains).
+   - Prefer: Nature, Lancet, Nature Medicine, arXiv, PubMed, top venues.
+
+2. **Fetch & Read**
+   - Download or open each selected link. Save PDFs to `wechat_factory/01_sources/papers_pdf/`, or save page content to `wechat_factory/01_sources/web_snapshots/`.
+   - Use PDF Parser (or `scripts/extract_pdf_text.sh` + summarize) to get: abstract, key methods, results, conclusion. Compare with `wechat_factory/02_knowledge_base/<domain>_ai.md` for novelty.
+
+3. **Title**
+   - Read `wechat_factory/03_templates/viral_titles.txt`. Generate 5 candidate titles per article, pick the best one for click-through.
+
+4. **Draft**
+   - Style: like 机器之心. Length: 1500–2000 characters. Format: Markdown per `wechat_factory/03_templates/article_style.md`.
+   - Write one article per domain.
+
+5. **Save**
+   - Ensure folder exists: `wechat_factory/04_output/YYYY-MM-DD/` (today’s date).
+   - Write: `MED_article.md`, `FIN_article.md`, `EDU_article.md`, and two more (e.g. `TECH_article.md`, `POLICY_article.md`).
+
+6. **Cover (optional)**
+   - For each article, use Image Gen to create a cover from title/abstract; save to `wechat_factory/05_assets/images/` with name `YYYY-MM-DD_<DOMAIN>_cover.png`.
+
+## Rules
+- Do not delete or overwrite `02_knowledge_base` or `03_templates`.
+- If a PDF cannot be parsed, use the web snapshot content instead.
+- Use TOOLS.md in the workspace for tool names and paths.
+```
+
+**3.3 在 openclaw.json 中绑定 workspace**
+
+在 `~/.openclaw/openclaw.json` 中为该 Agent 指定 workspace：**单 Agent** 时只改 `agents.defaults.workspace`；**多 Agent** 时在 `agents.list` 中增加一条，例如：
+
+```json
+{
+  "agents": {
+    "list": [
+      {
+        "id": "wechat-editor",
+        "name": "Wechat Editor",
+        "workspace": "/home/renjeff/Documents/projects/wechat",
+        "instructions": "~/.openclaw/agents/wechat-editor/INSTRUCTIONS.md"
+      }
+    ]
+  }
+}
+```
+
+若 OpenClaw 通过文件路径加载指令，可能只需 `instructions` 指向上述文件；若通过 UI 或其它键名加载，请以官方文档为准。
+
+**3.4 配置 Cron 定时触发**
+
+- 假设 OpenClaw CLI 支持通过 agent id 发一条“执行今日任务”消息，可写成 cron（示例：每天 8:00 执行）：
+  ```bash
+  0 8 * * * OPENCLAW_AGENT=wechat-editor openclaw agent --message "执行今日公众号任务，产出 5 篇并保存到 04_output"
+  ```
+  实际命令需根据 OpenClaw 的 CLI 用法调整（如 `openclaw run`、`openclaw chat` 等）。
+- 或使用 OpenClaw 自带的 **cron** 工具（若已启用）：在界面或配置中添加每日任务，消息内容同上。
+- 可选：再加一条 cron 在 23:00 对 workspace 做 Git 提交（见 Phase 4.3）。
+
+---
+
 ### Phase 4: 外部工具与发布链
 
 | Step | Action | Purpose |
@@ -50,6 +475,60 @@
 | 4.3 | 配置系统 Cron：定时运行 OpenClaw 任务 + 可选 Git 提交（如每日 23:00 提交 04_output） | 稳定性与可回滚 |
 | 4.4 | 在 02_knowledge_base 与 03_templates 中逐步填充领域知识与标题句式 | 提高选题与文案质量 |
 
+#### Phase 4 详细设置
+
+**4.1 Ollama（已在 Phase 0 提及，此处补充调用方式）**
+
+- 在 Agent 指令或 Skill 中可约定：对“候选摘要列表”先调用本地 Ollama 做翻译或去重，再把结果交给 Claude 润色。示例（在 bash 中测试）：
+  ```bash
+  ollama run qwen2.5:7b "将以下英文摘要翻译为中文：<paste abstract>"
+  ```
+- 若通过 OpenClaw 的 `exec`/`bash` 调用，需在 INSTRUCTIONS 或 TOOLS.md 中写明：何时用 Ollama（例如“对非中文摘要先调用 ollama 翻译”）。
+
+**4.2 Pandoc / Markdown-to-WeChat 脚本**
+
+- 安装 Pandoc：
+  ```bash
+  sudo apt install pandoc   # Debian/Ubuntu
+  # 或 brew install pandoc  # macOS
+  ```
+- 在项目内创建脚本 `scripts/md2wechat.sh`：
+  ```bash
+  #!/usr/bin/env bash
+  # Usage: ./scripts/md2wechat.sh wechat_factory/04_output/2026-03-15
+  set -e
+  DIR="${1:-wechat_factory/04_output/$(date +%Y-%m-%d)}"
+  OUT="${DIR}/html"
+  mkdir -p "$OUT"
+  for f in "$DIR"/*.md; do
+    [ -f "$f" ] || continue
+    base=$(basename "$f" .md)
+    pandoc "$f" -f markdown -t html -o "$OUT/${base}.html" --standalone
+  done
+  echo "HTML written to $OUT"
+  ```
+  chmod +x scripts/md2wechat.sh。公众号后台可复制 `OUT/*.html` 内容粘贴（或再经一次样式内联工具）。
+
+**4.3 Cron：OpenClaw + Git 提交**
+
+- 编辑 crontab：`crontab -e`
+- 添加（按实际路径和 CLI 修改）：
+  ```cron
+  # 每天 8:00 执行 wechat 流水线
+  0 8 * * * cd /home/renjeff/Documents/projects/wechat && openclaw agent --message "执行今日公众号任务" 2>&1 | tee -a /tmp/wechat-pipeline.log
+
+  # 每天 23:00 提交当日产出（可选）
+  0 23 * * * cd /home/renjeff/Documents/projects/wechat && git add wechat_factory/04_output wechat_factory/05_assets && git diff --staged --quiet || git commit -m "Daily wechat output $(date +%Y-%m-%d)" && git push
+  ```
+
+**4.4 填充 02_knowledge_base 与 03_templates**
+
+- 编辑 `wechat_factory/02_knowledge_base/medical_ai.md`（及 finance、edu）：加入术语表、已解析论文列表（日期 | 标题 | 来源）、政策/趋势摘要。
+- 编辑 `wechat_factory/03_templates/viral_titles.txt`：每行一句标题句式或示例。
+- 编辑 `wechat_factory/03_templates/article_style.md`：规定 H1/H2/H3、段落、引用、配图路径等，与 DESIGN 一致。
+
+---
+
 ### Phase 5: 测试与上线
 
 | Step | Action | Purpose |
@@ -58,6 +537,30 @@
 | 5.2 | 工具级测试：分别验证搜索、抓取、PDF 解析、写文件、图像生成 | 快速定位故障点 |
 | 5.3 | 日产出测试：连续 2～3 天跑满 5 篇，检查 04_output 与 05_assets | 验证产能与稳定性 |
 | 5.4 | 发布链测试：Markdown → HTML → 公众号后台粘贴（或 API） | 验证最后一公里 |
+
+#### Phase 5 详细操作
+
+**5.1 单链路测试**
+
+- 在 OpenClaw 中对该 Agent 发送一条消息，例如：
+  - “只做一篇：医疗 AI。从搜索开始，选一篇论文，抓取或下载，解析，拟题，写一篇 1500 字文章保存到 wechat_factory/04_output/$(date +%Y-%m-%d)/MED_article.md。”
+- 检查：该日期目录下是否出现 `MED_article.md`，内容是否完整、符合风格。
+
+**5.2 工具级测试**
+
+- 按 Part C 表格逐项：在对话中分别请求“用搜索查…”“打开某 URL 并保存到 web_snapshots”“读取某 PDF 并总结”“在 04_output 下创建目录并写入 test.md”“生成一张封面到 05_assets/images”。确认每步成功且路径正确。
+
+**5.3 日产出测试**
+
+- 连续 2～3 天在固定时间触发“执行今日公众号任务”（或依赖 Cron）。每天检查 `04_output/YYYY-MM-DD/` 下是否有 5 个 md 文件、命名正确、内容非空；检查 Cron 与 Git 是否按 4.3 执行。
+
+**5.4 发布链测试**
+
+- 取一篇 `04_output/YYYY-MM-DD/*.md`，运行：
+  ```bash
+  ./scripts/md2wechat.sh wechat_factory/04_output/YYYY-MM-DD
+  ```
+- 打开生成的 `html/*.html`，复制到公众号后台，检查版式与图片；若有 API 发布，再测一次端到端发布。
 
 ---
 
