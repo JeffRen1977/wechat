@@ -404,9 +404,15 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 **3.4 配置 Cron 定时触发**
 
-- 触发**默认 Agent**（无需指定 agent id），示例（每天 8:00）：
+- **方式 A（推荐）**：使用项目内脚本（会 cd 到 workspace、写日志到 `$LOG`，默认 `/tmp/wechat-pipeline.log`）：
   ```bash
-  0 8 * * * openclaw agent --message "执行今日公众号任务，产出 5 篇并保存到 04_output"
+  # 每天 8:00
+  0 8 * * * /home/renjeff/Documents/projects/wechat/scripts/run-daily-wechat.sh
+  ```
+  脚本内部调用 `openclaw agent --message "执行今日公众号任务，产出 5 篇并保存到 04_output"`。
+- **方式 B**：直接写 cron（需保证 cron 运行时 `openclaw` 在 PATH 且当前目录或环境正确）：
+  ```bash
+  0 8 * * * cd /home/renjeff/Documents/projects/wechat && openclaw agent --message "执行今日公众号任务，产出 5 篇并保存到 04_output" >> /tmp/wechat-pipeline.log 2>&1
   ```
   实际命令需根据 OpenClaw 的 CLI 用法调整（如 `openclaw run`、`openclaw chat` 等）。
 - 或使用 OpenClaw 自带的 **cron** 工具（若已启用）：在界面或配置中添加每日任务，消息内容同上。
