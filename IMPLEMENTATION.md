@@ -575,11 +575,41 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 **5.4 发布链测试**
 
-- 取一篇 `04_output/YYYY-MM-DD/*.md`，运行：
-  ```bash
-  ./scripts/md2wechat.sh wechat_factory/04_output/YYYY-MM-DD
-  ```
-- 打开生成的 `html/*.html`，复制到公众号后台，检查版式与图片；若有 API 发布，再测一次端到端发布。
+目的：把 `04_output` 中的文章落到公众号（草稿箱），可**手动粘贴**或**API 上传**。需要 **pandoc**（`sudo apt install pandoc`）用于 Markdown→HTML。
+
+**方式 A：手动粘贴到公众号后台（无需 API 凭证）**
+
+1. **生成 HTML**（在项目根目录）：
+   ```bash
+   ./scripts/md2wechat.sh wechat_factory/04_output/2026-03-15
+   ```
+   产出在 `wechat_factory/04_output/2026-03-15/html/`，例如 `MED_article.html`。
+
+2. **在浏览器中打开该 HTML 文件**（如 `file:///.../04_output/2026-03-15/html/MED_article.html`），全文选中（Ctrl+A），复制（Ctrl+C）。
+
+3. **登录微信公众平台** → 素材管理 / 新建图文 → **正文框**内粘贴（Ctrl+V）。标题可复制文章内第一个 H1（如「一篇搞懂 AMIE：…」），摘要可填前一两句。在后台**上传并设置封面图**（公众号要求必填），保存为草稿或直接群发。
+
+4. **检查**：版式、分段、加粗是否正常；若正文有配图，需在后台正文中再插入图片（本脚本仅转正文，不处理文内图 URL）。
+
+**方式 B：API 上传到草稿箱（需公众号凭证 + 封面图）**
+
+1. **封面图**：公众号 API 要求每篇必有封面。将封面放到 `wechat_factory/05_assets/images/`，命名：`YYYY-MM-DD_MED_cover.png`（或 `.jpg`）。例如 2026-03-15 的医疗篇即 `2026-03-15_MED_cover.png`。无封面时 `wechat-draft-upload.sh` 会跳过该篇。
+
+2. **凭证**：在 shell 中设置（勿提交到 Git）：
+   ```bash
+   export WECHAT_APPID="你的AppID"
+   export WECHAT_SECRET="你的AppSecret"
+   ```
+
+3. **上传草稿**：
+   ```bash
+   ./scripts/wechat-draft-upload.sh 2026-03-15
+   ```
+   成功会输出 `media_id=...`，并在公众号后台「草稿箱」中看到该图文。
+
+4. **依赖**：脚本内部用 pandoc 转 HTML、curl 调微信 API、jq 解析 JSON；未安装则 `sudo apt install pandoc curl jq`。
+
+**当前你这一篇（2026-03-15 MED_article）**：若暂无封面图，用**方式 A** 即可完成 5.4（先装 pandoc，生成 HTML 后复制到公众号后台并手动上传一张封面）。之后有封面图或多篇时，再用**方式 B** 做端到端上传。
 
 ---
 
