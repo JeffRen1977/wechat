@@ -293,9 +293,9 @@
 
 - **搜索**：`duckduckgo-search` 免费、无需 API Key。若需 Brave/Google，可改为 `brave-search` 或 `google-search` MCP，并配置对应 Key。
 - `filesystem` 的第三个参数必须是**绝对路径**，指向你的 `wechat_factory` 目录（或 workspace 根，再在 TOOLS.md 中约定子路径）。
-- 若使用 Google Search MCP，可增加一条 `"google-search": { ... }`，并到其 npm 页面查看所需 args/env。
-- PDF：若没有现成 PDF MCP，可先用 `exec`/`bash` 调用本地脚本（见下方 2.3 可选脚本）。
-- Image Gen：若有 DALL·E/Flux 的 MCP，再增加对应 server 配置。
+- **Google Search MCP**：若需 Google 检索，在 `mcpServers` 中增加一条，例如 `"google-search": { "command": "npx", "args": ["-y", "<package-name>"], "env": { "GOOGLE_API_KEY": "" }, "transport": "stdio" }`；具体包名与 env 以 npm 页面为准（如 `@modelcontextprotocol/server-google-search` 或等效）。
+- **PDF**：若没有现成 PDF MCP，用 `exec`/`bash` 调用项目内 `scripts/extract_pdf_text.sh <path-to-pdf>`，再对 stdout 做总结；见下方 2.3 可选脚本。
+- **Image Gen**：若需自动生成封面，可增加 DALL·E 或 Flux 的 MCP（如 `@modelcontextprotocol/server-dalle` 或社区 flux-mcp），在 `mcpServers` 中配置对应 `command`/`args`/`env`，并在 TOOLS.md 中说明输出目录为 `wechat_factory/05_assets/images/`。
 
 **2.2 编写 workspace/TOOLS.md（给 Agent 看的工具说明）**
 
