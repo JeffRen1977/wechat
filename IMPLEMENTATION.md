@@ -252,15 +252,19 @@
 
 **2.1 编辑 ~/.openclaw/openclaw.json，添加 mcpServers**
 
-在配置文件中加入或合并以下块（路径与 key 请按你的环境替换；**勿将真实 API Key 提交到 Git**）：
+**免费搜索选项（无需 API Key）：**
+
+- **OpenClaw 内置**：若 `tools.allow` 包含 `group:web`，则已有 `web_search`、`web_fetch`，可直接用，无需额外 MCP。
+- **DuckDuckGo MCP（推荐）**：使用 `@oevortex/ddg_search`，无需 API Key，运行 `npx -y @oevortex/ddg_search@latest` 即可。下方示例用 `duckduckgo-search` 替代 Brave。
+
+在配置文件中加入或合并以下块（路径请按你的环境替换；**勿将真实 API Key 提交到 Git**）：
 
 ```json
 {
   "mcpServers": {
-    "brave-search": {
+    "duckduckgo-search": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
-      "env": { "BRAVE_API_KEY": "<your-brave-api-key>" },
+      "args": ["-y", "@oevortex/ddg_search@latest"],
       "transport": "stdio"
     },
     "filesystem": {
@@ -287,7 +291,7 @@
 
 说明：
 
-- 将 `BRAVE_API_KEY` 改为环境变量更安全，例如在 shell 中 `export BRAVE_API_KEY=...`，并在 `env` 中写 `"BRAVE_API_KEY": "${BRAVE_API_KEY}"`（若 OpenClaw 支持环境变量展开）。
+- **搜索**：`duckduckgo-search` 免费、无需 API Key。若需 Brave/Google，可改为 `brave-search` 或 `google-search` MCP，并配置对应 Key。
 - `filesystem` 的第三个参数必须是**绝对路径**，指向你的 `wechat_factory` 目录（或 workspace 根，再在 TOOLS.md 中约定子路径）。
 - 若使用 Google Search MCP，可增加一条 `"google-search": { ... }`，并到其 npm 页面查看所需 args/env。
 - PDF：若没有现成 PDF MCP，可先用 `exec`/`bash` 调用本地脚本（见下方 2.3 可选脚本）。
@@ -300,8 +304,9 @@
 ```markdown
 # Tools for wechat_factory Pipeline
 
-## Deep Search (brave_search / web_search)
+## Deep Search (duckduckgo_search / web_search / brave_search)
 - Use to find **latest AI papers** (past 24–48 hours). Prefer sources: Nature, Lancet, arXiv, PubMed.
+- Free option: OpenClaw built-in `web_search` (group:web) or DuckDuckGo MCP (`duckduckgo-search`); no API key required.
 - Example intent: "Search for recent medical AI papers in Nature Medicine."
 
 ## Web Browser (browser / puppeteer)
