@@ -4,12 +4,25 @@
 
 ## 专有名词
 
-- （待补充）
+- **FDA 510(k) / De Novo**：美国医疗器械上市途径；AI 医疗软件常走 De Novo 或 510(k)。
+- **CE MDR / IVDR**：欧盟医疗器械与体外诊断法规；AI 诊断类需符合 IVDR。
+- **NMPA**：中国国家药品监督管理局；AI 辅助诊断/治疗需注册或备案。
+- **临床决策支持系统 (CDSS)**：基于规则或 ML 的辅助诊断/用药建议系统。
+- **多模态融合**：结合影像、病理、基因组、电子病历等多源数据的模型。
+- **可解释 AI (XAI)**：可解释性要求高的医疗场景（如病理、放射）中的解释方法。
+- **联邦学习 (FL)**：多机构协作训练、数据不出域，常用于医疗隐私场景。
+- **数字病理 / computational pathology**：全切片扫描 (WSI) + AI 分析。
+- **NeurIPS/ICML/ICLR 医疗轨道**：顶会中与医疗 AI 相关的 workshop 或 track。
+- **Lancet / Nature Medicine / JAMA**：高影响力医学期刊，选题可优先参考。
 
 ## 已解析论文 / 选题记录
 
 - （用于去重，格式：日期 | 标题 | 来源）
+- 示例：2025-01-15 | Self-supervised learning for whole slide imaging | Nature Medicine
+- 示例：2025-01-10 | Multimodal fusion for ICU outcome prediction | arXiv:2501.xxxxx
 
 ## 政策与趋势摘要
 
-- （待补充）
+- **监管**：中美欧均在推进 AI 医疗软件分类与审评指南；落地需关注合规路径。
+- **趋势**：多模态、大模型+小模型协同、从影像到病理/基因组/临床文本的扩展。
+- **伦理**：知情同意、数据隐私、算法公平性、责任归属为常见议题；撰写时保持客观中立。

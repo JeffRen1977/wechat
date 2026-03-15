@@ -485,21 +485,23 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 **4.3 Cron：OpenClaw + Git 提交**
 
-- 编辑 crontab：`crontab -e`
-- 添加（按实际路径和 CLI 修改）：
+- **4.3a 每日流水线（8:00）**：已由 `scripts/run-daily-wechat.sh` 实现；Cron 只需调用该脚本（见 Phase 3.4）。
+- **4.3b 每日 Git 提交（23:00，可选）**：使用 `scripts/git-commit-daily.sh`，将当日 `04_output`、`05_assets` 的变更 add/commit/push；无变更则跳过。
+- 编辑 crontab：`crontab -e`，添加（路径按实际修改）：
   ```cron
   # 每天 8:00 执行 wechat 流水线
-  0 8 * * * cd /home/renjeff/Documents/projects/wechat && openclaw agent --message "执行今日公众号任务" 2>&1 | tee -a /tmp/wechat-pipeline.log
+  0 8 * * * /home/renjeff/Documents/projects/wechat/scripts/run-daily-wechat.sh
 
-  # 每天 23:00 提交当日产出（可选）
-  0 23 * * * cd /home/renjeff/Documents/projects/wechat && git add wechat_factory/04_output wechat_factory/05_assets && git diff --staged --quiet || git commit -m "Daily wechat output $(date +%Y-%m-%d)" && git push
+  # 每天 23:00 提交并推送当日产出（可选）
+  0 23 * * * /home/renjeff/Documents/projects/wechat/scripts/git-commit-daily.sh
   ```
+  完整示例见 `scripts/cron.example`。
 
 **4.4 填充 02_knowledge_base 与 03_templates**
 
-- 编辑 `wechat_factory/02_knowledge_base/medical_ai.md`（及 finance、edu）：加入术语表、已解析论文列表（日期 | 标题 | 来源）、政策/趋势摘要。
-- 编辑 `wechat_factory/03_templates/viral_titles.txt`：每行一句标题句式或示例。
-- 编辑 `wechat_factory/03_templates/article_style.md`：规定 H1/H2/H3、段落、引用、配图路径等，与 DESIGN 一致。
+- **02_knowledge_base**：`medical_ai.md`、`finance_ai.md`、`edu_ai.md` 已填充术语表、已解析论文列表格式（日期 | 标题 | 来源）及政策/趋势摘要；可随运行逐步追加「已解析论文」行。
+- **03_templates/viral_titles.txt**：已加入多条高点击标题句式，每行一句；Agent 可据此生成并择优。
+- **03_templates/article_style.md**：已规定单 H1、H2/H3、段落/加粗/引用/列表、配图路径（`05_assets/images/`），与 DESIGN、PUBLISHING 一致。
 
 ---
 

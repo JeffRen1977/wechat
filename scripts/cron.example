@@ -1,8 +1,8 @@
 # Example crontab entries for wechat_factory (paste into crontab -e).
 # Adjust paths and schedule as needed.
 
-# Daily pipeline at 8:00
+# 4.3a: Daily pipeline at 8:00
 0 8 * * * /home/renjeff/Documents/projects/wechat/scripts/run-daily-wechat.sh
 
-# Optional: Git commit daily output at 23:00
-# 0 23 * * * cd /home/renjeff/Documents/projects/wechat && git add wechat_factory/04_output wechat_factory/05_assets && git diff --staged --quiet || (git commit -m "Daily wechat output $(date +\%Y-\%m-\%d)" && git push)
+# 4.3b: Optional – Git commit and push daily output at 23:00
+0 23 * * * /home/renjeff/Documents/projects/wechat/scripts/git-commit-daily.sh
