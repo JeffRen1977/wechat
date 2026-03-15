@@ -595,21 +595,31 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 1. **封面图**：公众号 API 要求每篇必有封面。将封面放到 `wechat_factory/05_assets/images/`，命名：`YYYY-MM-DD_MED_cover.png`（或 `.jpg`）。例如 2026-03-15 的医疗篇即 `2026-03-15_MED_cover.png`。无封面时 `wechat-draft-upload.sh` 会跳过该篇。
 
-2. **凭证**：在 shell 中设置（勿提交到 Git）：
+2. **凭证**：脚本会自动加载 `~/.wechat-env` 或 `~/wechat-env`（若存在）；也可在 shell 中手动设置（勿提交到 Git）：
    ```bash
    export WECHAT_APPID="你的AppID"
    export WECHAT_SECRET="你的AppSecret"
    ```
+   - **凭证文件**：将上述两行写入 `~/.wechat-env` 或 `~/wechat-env`，`chmod 600`，则脚本在 cron 或非交互 shell 下也能读到；交互终端下也可用 `~/.bashrc` 导出，再执行脚本。
+   **如何获取 AppID 与 AppSecret**：
+   - **推荐路径（可查看/重置 AppSecret）**：使用 [**微信开发者平台**](https://developers.weixin.qq.com/platform/)（注意不是公众平台 mp.weixin.qq.com）。  
+     1. 打开 https://developers.weixin.qq.com/platform/ ，用**微信扫码登录**。  
+     2. 进入 **「我的业务」→「公众号/服务号」**，在列表中找到你的公众号并点进**详情页**。  
+     3. 在详情页可看到 **AppID** 和 **AppSecret**，并可在此**重置**或冻结/解冻 AppSecret。平台不保存 AppSecret，若忘记只能重置后立即保存新密钥。  
+   - **若提示「该账号尚未完成主体认证」或「该账号尚未完成实名」**：需先在 [微信公众平台](https://mp.weixin.qq.com) 完成：**账号详情 → 主体信息/认证情况** 下的实名与认证（个人主体需管理员实名，非个人主体需微信认证），完成后再回开发者平台操作。
+   - **公众平台 mp.weixin.qq.com**：在 **「开发」→「基本配置」** 只能看到 AppID；新版中 AppSecret 的查看与重置已迁移到上述**开发者平台**，若在公众平台找不到 AppSecret，请改用开发者平台。
+   - **IP 白名单**：在公众平台 **「开发」→「基本配置」** 中配置 **IP 白名单**，加入**执行上传脚本的那台机器的公网出口 IP**（即调用微信 API 的 IP）。未加入则接口返回 40164（invalid ip, not in whitelist）。可用 `curl -s ifconfig.me` 在本机查看当前公网 IP 并填入白名单。
 
 3. **上传草稿**：
    ```bash
+   source ~/wechat-env   # 若未在 .bashrc 中导出，则先加载
    ./scripts/wechat-draft-upload.sh 2026-03-15
    ```
-   成功会输出 `media_id=...`，并在公众号后台「草稿箱」中看到该图文。
+   成功会输出 `media_id=...`，并在公众号后台「草稿箱」中看到该图文。脚本不传自定义摘要（digest），由微信按正文前 54 字自动生成，避免 45004（description size out of limit）。
 
-4. **依赖**：脚本内部用 pandoc 转 HTML、curl 调微信 API、jq 解析 JSON；未安装则 `sudo apt install pandoc curl jq`。
+4. **依赖**：脚本内部用 pandoc 转 HTML、curl 调微信 API、jq 解析 JSON；未安装则 `sudo apt install pandoc curl jq`。失败时错误会输出到终端（stderr）并写入 `/tmp/wechat-draft-upload.log`。
 
-**当前你这一篇（2026-03-15 MED_article）**：若暂无封面图，用**方式 A** 即可完成 5.4（先装 pandoc，生成 HTML 后复制到公众号后台并手动上传一张封面）。之后有封面图或多篇时，再用**方式 B** 做端到端上传。
+**说明**：若暂无封面图，可先用**方式 A** 完成 5.4（生成 HTML 后复制到公众号后台并手动上传封面）；有封面图后使用**方式 B** 端到端上传。常见 API 错误：40164 → 检查 IP 白名单；45004 → 已通过不传 digest 规避。
 
 ---
 

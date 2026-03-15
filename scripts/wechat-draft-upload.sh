@@ -6,6 +6,9 @@
 set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+# Load WeChat credentials (e.g. for cron); optional if already in environment
+[[ -f "$HOME/.wechat-env" ]] && source "$HOME/.wechat-env"
+[[ -f "$HOME/wechat-env" ]] && source "$HOME/wechat-env"
 DATE="${1:-$(date +%Y-%m-%d)}"
 OUT_DIR="$ROOT/wechat_factory/04_output/$DATE"
 IMG_DIR="$ROOT/wechat_factory/05_assets/images"
@@ -73,18 +76,18 @@ for md in "$OUT_DIR"/*.md; do
   fi
   title=$(get_title "$md" "$base")
   content=$(md_to_wechat_html "$md")
-  digest=$(echo "$content" | sed 's/<[^>]*>//g' | head -c 128)
+  # Omit digest so WeChat auto-fills from content (avoids 45004 description size limit)
   one=$(jq -n \
     --arg title "$title" \
-    --arg digest "$digest" \
     --arg content "$content" \
     --arg thumb "$thumb_media_id" \
-    '{article_type:"news",title:$title,digest:$digest,content:$content,thumb_media_id:$thumb,need_open_comment:0,only_fans_can_comment:0}')
+    '{article_type:"news",title:$title,content:$content,thumb_media_id:$thumb,need_open_comment:0,only_fans_can_comment:0}')
   if [[ -z "$ARTICLES_JSON" ]]; then ARTICLES_JSON="$one"; else ARTICLES_JSON="$ARTICLES_JSON,$one"; fi
 done
 
 if [[ -z "$ARTICLES_JSON" ]]; then
   echo "No articles built. Check covers in $IMG_DIR and MD in $OUT_DIR." >> "$LOG"
+  echo "No articles built. See $LOG" >&2
   exit 1
 fi
 
@@ -96,6 +99,7 @@ RESP=$(curl -s -X POST "https://api.weixin.qq.com/cgi-bin/draft/add?access_token
 media_id=$(echo "$RESP" | jq -r '.media_id')
 if [[ -z "$media_id" || "$media_id" == "null" ]]; then
   echo "draft/add failed: $RESP" >> "$LOG"
+  echo "draft/add failed: $RESP" >&2
   exit 1
 fi
 echo "[$(date -Iseconds)] Draft uploaded: media_id=$media_id (date=$DATE)" >> "$LOG"
