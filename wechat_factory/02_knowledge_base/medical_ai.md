@@ -20,6 +20,8 @@
 - （用于去重，格式：日期 | 标题 | 来源）
 - 示例：2025-01-15 | Self-supervised learning for whole slide imaging | Nature Medicine
 - 示例：2025-01-10 | Multimodal fusion for ICU outcome prediction | arXiv:2501.xxxxx
+- 2026-03-15 | A prospective clinical feasibility study of a conversational diagnostic AI in an ambulatory primary care clinic | arXiv:2603.08448
+- 2026-03-15 | MedPruner: Training-Free Hierarchical Token Pruning for Efficient 3D Medical Image Understanding in Vision-Language Models | arXiv:2603.11625
 
 ## 政策与趋势摘要
 

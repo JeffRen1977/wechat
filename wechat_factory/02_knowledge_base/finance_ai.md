@@ -18,6 +18,8 @@
 - （用于去重，格式：日期 | 标题 | 来源）
 - 示例：2025-01-12 | LLMs for earnings call analysis | SSRN / arXiv
 - 示例：2025-01-08 | Reinforcement learning in portfolio optimization | Journal of Finance (或等价来源)
+- 2026-03-15 | Regime-aware financial volatility forecasting via in-context learning | arXiv:2603.10299
+- 2026-03-15 | FinToolBench: Evaluating LLM Agents for Real-World Financial Tool Use | arXiv:2603.08262
 
 ## 行业趋势摘要
 
