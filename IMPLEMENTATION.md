@@ -596,6 +596,10 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 | 4 | **Filesystem** | 在 wechat_factory/04_output/ 下创建目录 2026-03-16（若不存在），并在其中写入文件 test.md，内容为一行：5.2 tool test。 | 存在 `wechat_factory/04_output/2026-03-16/test.md`，内容含 “5.2 tool test”。 |
 | 5 | **Image Gen** | 根据「医疗 AI 诊断新突破」生成一张科技感封面图，保存到 wechat_factory/05_assets/images/，文件名为 5.2_test_cover.png。若当前无图像生成工具，回复说明即可。 | 图片存在且路径正确，或无该工具时 Agent 说明。 |
 
+- **若 Agent 仍回复「无图像生成工具」**：在对话中直接粘贴以下指令，要求 Agent **执行**该命令：  
+  **请执行以下命令生成 5.2 测试封面图（会生成 cover 与 fig1、fig2，可任选其一作为 5.2_test_cover）：**  
+  `./scripts/run-gemini-images.sh wechat_factory/04_output/2026-03-15/MED_article.md`  
+  脚本会从 `~/.gemini-env` 读取 GEMINI_API_KEY；若报错缺 Key，请在服务器上执行 `echo 'export GEMINI_API_KEY=你的key' >> ~/.gemini-env && chmod 600 ~/.gemini-env`。
 - 若某步报错：记下工具名与报错信息，便于排查（如搜索无 API、浏览器未启用、写盘权限等）。路径均相对于 workspace 根（项目目录）。
 
 **5.3 日产出测试**
