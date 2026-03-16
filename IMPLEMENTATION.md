@@ -575,8 +575,8 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
    - **内容**：打开文件，确认约 1500 字、单 H1、H2/H3 结构、段落与引用符合 `article_style.md`；标题与正文风格可参考 `viral_titles.txt` 与知识库。
    - **可选**：若配置了图像生成，检查 `05_assets/images/` 是否有对应封面；正文中是否引用了 `02_knowledge_base` 的术语或趋势。
 
-5. **（可选）更新知识库**  
-   若希望后续去重：把本次解析的论文按「日期 | 标题 | 来源」追加到 `02_knowledge_base/medical_ai.md`（或 finance/edu）的「已解析论文」列表。
+5. **更新知识库（去重）**  
+   把本次解析的论文按「日期 | 标题 | 来源」追加到对应领域的 `02_knowledge_base` 的「已解析论文」列表：`medical_ai.md`（MED）、`finance_ai.md`（FIN）、`edu_ai.md`（EDU）。流水线技能与 TOOLS.md 中已约定此步骤，便于后续选题去重。
 
 **若未产出文件**
 

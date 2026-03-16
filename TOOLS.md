@@ -17,6 +17,7 @@
 - **Read**: `wechat_factory/02_knowledge_base/*.md`, `wechat_factory/03_templates/*`.
 - **Write**: Save articles to `wechat_factory/04_output/YYYY-MM-DD/MED_article.md` (and FIN_, EDU_, etc.).
 - **Create** daily folder: `wechat_factory/04_output/$(date +%Y-%m-%d)/`.
+- **Update knowledge base (dedup)**: After saving an article, append one line to the domain's `02_knowledge_base` file under the 「已解析论文」 section, format: `YYYY-MM-DD | 论文标题 | 来源` (e.g. medical_ai.md for MED, finance_ai.md for FIN, edu_ai.md for EDU).
 - **Do not** delete or overwrite `02_knowledge_base` or `03_templates`.
 
 ## Ollama (local, optional)
