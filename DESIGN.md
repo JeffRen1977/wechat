@@ -155,6 +155,17 @@ wechat_factory/
 6. **配图（可选）**  
    调用 Image Gen 根据摘要生成封面，保存至 `05_assets/images/` 并在文章 Frontmatter 或文末注明路径。
 
+### 6.3 单篇来自外部分享（链接 / 粘贴，如 WhatsApp）
+
+当 OpenClaw 与 WhatsApp（或其它渠道）打通后，用户可发送 **一条链接** 或 **粘贴一段内容**，触发「根据该来源写一篇公众号文章」：
+
+1. **链接**：用浏览器/抓取工具打开 URL，将正文保存到 `01_sources/web_snapshots/`（或 PDF 到 `papers_pdf/`），解析后作为素材。
+2. **粘贴内容**：直接以用户提供的文本为素材，可选保存副本到 `01_sources/web_snapshots/` 以便追溯。
+3. **撰稿与落盘**：按 `article_style.md` 与模板写一篇 1500–2000 字文章，保存为 `04_output/YYYY-MM-DD/INBOX_article.md`。
+4. **可选**：对该篇运行配图脚本并上传草稿（与每日 5 篇共用同一套 `run-gemini-images.sh`、`wechat-draft-upload.sh`）。
+
+详见 **skills/wechat-from-inbox/SKILL.md**；触发语示例：「写一篇公众号文章，来源是这个链接 / 以下内容。」
+
 ---
 
 ## 7. 领域与质量策略（示例：医疗 AI）

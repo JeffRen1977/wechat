@@ -658,7 +658,7 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
    ```
    成功会输出 `media_id=...`，并在公众号后台「草稿箱」中看到该图文。脚本不传自定义摘要（digest），由微信按正文前 54 字自动生成，避免 45004（description size out of limit）。
 
-4. **依赖**：脚本内部用 pandoc 转 HTML、curl 调微信 API、jq 解析 JSON；未安装则 `sudo apt install pandoc curl jq`。失败时错误会输出到终端（stderr）并写入 `/tmp/wechat-draft-upload.log`。
+4. **依赖**：脚本内部用 **scripts/md_to_wechat_html.py**（Pandoc + 内联样式）转成公众号可识别的 HTML（微信会忽略 `<style>` 和外部 CSS，仅支持内联样式），再用 curl 调微信 API、jq 解析 JSON。需安装 `pandoc curl jq`（`sudo apt install pandoc curl jq`）。失败时错误会输出到终端（stderr）并写入 `/tmp/wechat-draft-upload.log`。
 
 **说明**：若暂无封面图，可先用**方式 A** 完成 5.4（生成 HTML 后复制到公众号后台并手动上传封面）；有封面图后使用**方式 B** 端到端上传。常见 API 错误：40164 → 检查 IP 白名单；45004 → 已通过不传 digest 规避。
 

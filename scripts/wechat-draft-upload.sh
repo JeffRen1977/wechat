@@ -40,11 +40,11 @@ upload_image() {
     -F "media=@$path" | jq -r '.media_id'
 }
 
-# Convert MD to HTML (strip style if needed), max ~20k chars for WeChat
+# Convert MD to WeChat-friendly HTML (body-only, inline styles; WeChat ignores <style>)
 md_to_wechat_html() {
   local md="$1"
   if [[ ! -f "$md" ]]; then echo ""; return; fi
-  pandoc "$md" -f markdown -t html --standalone 2>/dev/null | head -c 19000
+  python3 "$SCRIPT_DIR/md_to_wechat_html.py" "$md" --max-chars 19000
 }
 
 # Build title from first # line or filename
