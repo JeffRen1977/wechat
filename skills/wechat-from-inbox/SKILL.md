@@ -1,11 +1,11 @@
 ---
 name: wechat_from_inbox
-description: Generate one WeChat article from a user-provided link or pasted content (e.g. from WhatsApp).
+description: From a link or pasted content (e.g. WhatsApp), create one WeChat draft article and upload it to the WeChat draft box.
 ---
 
-# WeChat Article from Link or Content
+# WeChat Draft from Link or Content
 
-When the user sends **one link** or **pasted content** (e.g. via WhatsApp or chat) and wants a WeChat article from it:
+**Goal:** When the user sends **one link** or **pasted content** (e.g. via WhatsApp), create **one draft article** and **upload it to the WeChat draft box** so it appears in 微信公众平台 → 草稿箱.
 
 1. **Create today's output folder** if needed: `wechat_factory/04_output/YYYY-MM-DD/`.
 
@@ -15,22 +15,28 @@ When the user sends **one link** or **pasted content** (e.g. via WhatsApp or cha
 
 3. **Read** `wechat_factory/03_templates/article_style.md` and `viral_titles.txt`, and relevant `02_knowledge_base/*.md` if the topic fits a domain (MED/FIN/EDU).
 
-4. **Write one article** (1500–2000 chars, same style as daily pipeline) to  
+4. **Write one draft article** (1500–2000 chars, same style as daily pipeline) to  
    `wechat_factory/04_output/YYYY-MM-DD/INBOX_article.md`.  
    Use a single H1, H2/H3 structure, and follow `article_style.md`. Title ≤ 32 chars for WeChat.
 
-5. **Optional — images and upload**:
-   - Generate cover + 2 figures:  
-     `./scripts/run-gemini-images.sh wechat_factory/04_output/YYYY-MM-DD/INBOX_article.md`  
-     (produces `YYYY-MM-DD_INBOX_cover.png`, `_fig1.png`, `_fig2.png` in `05_assets/images/`).
-   - Upload to WeChat draft:  
-     `./scripts/wechat-draft-upload.sh YYYY-MM-DD`  
-     (includes INBOX_article if INBOX_cover exists).
+5. **Generate cover + figures** (required for upload; WeChat API requires a cover per article):
+   ```bash
+   ./scripts/run-gemini-images.sh wechat_factory/04_output/YYYY-MM-DD/INBOX_article.md
+   ```
+   Produces `YYYY-MM-DD_INBOX_cover.png`, `_fig1.png`, `_fig2.png` in `05_assets/images/`. Ensure `~/.gemini-env` has `GEMINI_API_KEY`.
 
-6. Do not delete `02_knowledge_base` or `03_templates`.
+6. **Upload to WeChat draft box**:
+   ```bash
+   ./scripts/wechat-draft-upload.sh YYYY-MM-DD
+   ```
+   This uploads INBOX_article (with INBOX_cover) to 微信公众平台草稿箱. Ensure `~/.wechat-env` has `WECHAT_APPID` and `WECHAT_SECRET` (or `WECHAT_ACCESS_TOKEN`).
 
-## Trigger phrases (for OpenClaw / WhatsApp integration)
+7. Do not delete `02_knowledge_base` or `03_templates`.
 
-- User sends a link: treat as "generate one WeChat article from this link."
-- User pastes long text: treat as "generate one WeChat article from this content."
-- Explicit: "写一篇公众号文章，来源是这个链接/以下内容。"
+**Result:** One new draft in the WeChat draft box, created from the link or content the user sent.
+
+## Trigger (e.g. WhatsApp)
+
+- User sends a link → create one draft from that link and upload to WeChat draft box.
+- User pastes content → create one draft from that content and upload to WeChat draft box.
+- Explicit: "写一篇公众号文章，来源是这个链接/以下内容，并上传到草稿箱。"
