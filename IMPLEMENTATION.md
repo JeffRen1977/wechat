@@ -507,7 +507,7 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 - 文章写入 `04_output/YYYY-MM-DD/*.md` 后，可用 **Gemini 原生图像生成（Nano Banana）** 自动生成 **1 张封面 + 2～3 张正文配图**，落地到 `05_assets/images/`，供公众号上传使用。
 - **脚本**：`scripts/gemini-gen-images.py`
-  - 依赖：`pip install -r requirements.txt`（`google-genai`、`Pillow`）；环境变量 **GEMINI_API_KEY** 或 **GOOGLE_API_KEY**。
+  - 依赖：`pip install -r requirements.txt`（`google-genai`、`Pillow`）；环境变量 **GEMINI_API_KEY** 或 **GOOGLE_API_KEY**。**若由 OpenClaw Agent 调用本脚本**：Agent 执行时不会加载 `~/.bashrc`，因此必须将密钥放在 **`~/.gemini-env`**（如 `export GEMINI_API_KEY=...`），脚本会自动读取；仅在本机终端手动运行时可用 `~/.bashrc`。
   - 默认模型：`gemini-2.5-flash-image`（Nano Banana）；可通过 `GEMINI_IMAGE_MODEL` 改为 `gemini-3.1-flash-image-preview`（Nano Banana 2）等。
   - 用法示例：
     ```bash
@@ -586,7 +586,17 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 **5.2 工具级测试**
 
-- 按 Part C 表格逐项：在对话中分别请求“用搜索查…”“打开某 URL 并保存到 web_snapshots”“读取某 PDF 并总结”“在 04_output 下创建目录并写入 test.md”“生成一张封面到 05_assets/images”。确认每步成功且路径正确。
+目的：逐项验证搜索、抓取、PDF、写文件、图像生成是否可用，路径是否正确。在 OpenClaw 中与默认 Agent 对话，**每次只发一条**，等完成后检查结果再发下一条。
+
+| # | 工具 | 在 OpenClaw 中发送的指令（可复制） | 验收 |
+|---|------|-----------------------------------|------|
+| 1 | **Deep Search** | 用搜索查过去 24 小时 Nature Medicine 或 arXiv 上的 medical AI 论文，列出 3 条标题与链接。 | Agent 返回若干链接与摘要，无报错。 |
+| 2 | **Web Browser** | 打开 https://arxiv.org/abs/2603.08448 ，把页面正文或摘要保存到 wechat_factory/01_sources/web_snapshots/5.2_test_arxiv.txt。 | 文件存在且内容合理（可 `cat` 或打开查看）。 |
+| 3 | **PDF Parser** | 读取 wechat_factory/01_sources/papers_pdf/ 下的任意一个 PDF（若有），总结其摘要和结论；若目录下没有 PDF，先说明“无 PDF 可读”即可。 | 输出结构化摘要，或明确说明无 PDF。 |
+| 4 | **Filesystem** | 在 wechat_factory/04_output/ 下创建目录 2026-03-16（若不存在），并在其中写入文件 test.md，内容为一行：5.2 tool test。 | 存在 `wechat_factory/04_output/2026-03-16/test.md`，内容含 “5.2 tool test”。 |
+| 5 | **Image Gen** | 根据「医疗 AI 诊断新突破」生成一张科技感封面图，保存到 wechat_factory/05_assets/images/，文件名为 5.2_test_cover.png。若当前无图像生成工具，回复说明即可。 | 图片存在且路径正确，或无该工具时 Agent 说明。 |
+
+- 若某步报错：记下工具名与报错信息，便于排查（如搜索无 API、浏览器未启用、写盘权限等）。路径均相对于 workspace 根（项目目录）。
 
 **5.3 日产出测试**
 
