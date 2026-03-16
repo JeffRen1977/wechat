@@ -521,6 +521,7 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
   - 产出：`05_assets/images/YYYY-MM-DD_PREFIX_cover.png`、`YYYY-MM-DD_PREFIX_fig1.png`、`fig2.png`（及可选 fig3）。封面可直接被 `wechat-draft-upload.sh` 使用；正文配图可在 Markdown 中引用或在转 HTML 后由发布流程上传。
   - **中文说明**：脚本使用**英文 prompt** 且要求**图像中不出现任何文字/字符**，避免模型渲染中文时出错；配图按领域前缀（MED/FIN/EDU）生成主题，不把文章中文标题或段落传入图像描述。
 - **与流水线衔接**：可在 OpenClaw 完成撰稿并写入 04_output 后，由 Cron 或人工执行上述脚本，再运行 `wechat-draft-upload.sh`；也可在 Agent 指令中约定「撰稿完成后调用 `scripts/gemini-gen-images.py` 生成封面与配图」。
+- **每篇 1 封面 + 2 配图并上传公众号**：使用 **`scripts/generate-images-and-upload.sh [YYYY-MM-DD]`**。该脚本会：对当日 `04_output/YYYY-MM-DD/` 下每篇 .md 调用 `run-gemini-images.sh`（生成 1 封面 + 2 张 fig1/fig2），然后执行 `wechat-draft-upload.sh` 将全部文章上传到公众号草稿箱。需配置 `~/.gemini-env`（GEMINI_API_KEY）与 `~/.wechat-env`（公众号凭证）。Cron 可在每日 8:00 流水线之后（如 9:00）执行此脚本，实现「5 篇 → 每篇 3 图 → 上传草稿」一条龙。
 
 ---
 
@@ -605,6 +606,13 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 **5.3 日产出测试**
 
 - 连续 2～3 天在固定时间触发“执行今日公众号任务”（或依赖 Cron）。每天检查 `04_output/YYYY-MM-DD/` 下是否有 5 个 md 文件、命名正确、内容非空；检查 Cron 与 Git 是否按 4.3 执行。
+- **验证 5 篇是否产出**（在项目根目录）：
+  ```bash
+  DATE=$(date +%Y-%m-%d)
+  ls wechat_factory/04_output/$DATE/*.md 2>/dev/null | wc -l    # 应为 5
+  ls wechat_factory/04_output/$DATE/
+  ```
+  若 Cron 触发，可查看 `/tmp/wechat-pipeline.log` 确认脚本是否执行及 `openclaw agent` 的返回。
 
 **5.4 发布链测试**
 

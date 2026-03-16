@@ -27,4 +27,5 @@
 
 ## Image Gen
 - Generate one cover image per article from title/abstract. Save to `wechat_factory/05_assets/images/` with name like `YYYY-MM-DD_MED_cover.png`.
-- **Gemini (Nano Banana)**：When asked to generate cover or figures, run via **bash**: `./scripts/run-gemini-images.sh wechat_factory/04_output/YYYY-MM-DD/<PREFIX>_article.md`. This wrapper sources `~/.gemini-env` then runs the image script. Ensure `~/.gemini-env` contains `export GEMINI_API_KEY=...` (Agent does not load `~/.bashrc`). See IMPLEMENTATION.md 4.5.
+- **Gemini (Nano Banana)**：When asked to generate cover or figures, run via **bash**: `./scripts/run-gemini-images.sh wechat_factory/04_output/YYYY-MM-DD/<PREFIX>_article.md`. Produces **1 cover + 2 content images** per article. This wrapper sources `~/.gemini-env` then runs the image script. Ensure `~/.gemini-env` contains `export GEMINI_API_KEY=...` (Agent does not load `~/.bashrc`). See IMPLEMENTATION.md 4.5.
+- **All articles → images → WeChat draft**：Run `./scripts/generate-images-and-upload.sh [YYYY-MM-DD]` to generate 1 cover + 2 figs for each .md in that day’s output, then upload all to the WeChat draft box.

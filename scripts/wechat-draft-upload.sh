@@ -56,16 +56,31 @@ get_title() {
   if [[ -n "$t" ]]; then echo "$t"; else echo "$base"; fi
 }
 
+# Find a cover for prefix; fallback: try first segment (MED_article_2 -> MED) or any DATE cover
+find_cover() {
+  local prefix="$1"
+  local c="$IMG_DIR/${DATE}_${prefix}_cover.png"
+  [[ -f "$c" ]] && echo "$c" && return
+  c="$IMG_DIR/${DATE}_${prefix}_cover.jpg"
+  [[ -f "$c" ]] && echo "$c" && return
+  # e.g. MED_article_2 -> try MED
+  local short="${prefix%%_*}"
+  [[ -n "$short" ]] && c="$IMG_DIR/${DATE}_${short}_cover.png" && [[ -f "$c" ]] && echo "$c" && return
+  # fallback: any cover for this date
+  for f in "$IMG_DIR"/${DATE}_*_cover.png "$IMG_DIR"/${DATE}_*_cover.jpg; do
+    [[ -f "$f" ]] && echo "$f" && return
+  done
+  return 1
+}
+
 ARTICLES_JSON=""
 for md in "$OUT_DIR"/*.md; do
   [[ -f "$md" ]] || continue
   base=$(basename "$md" .md)
-  # e.g. MED_article -> MED
   prefix="${base%_article}"
-  cover="$IMG_DIR/${DATE}_${prefix}_cover.png"
-  if [[ ! -f "$cover" ]]; then cover="$IMG_DIR/${DATE}_${prefix}_cover.jpg"; fi
-  if [[ ! -f "$cover" ]]; then
-    echo "No cover for $base, skip or use placeholder." >> "$LOG"
+  cover=$(find_cover "$prefix") || true
+  if [[ -z "$cover" || ! -f "$cover" ]]; then
+    echo "No cover for $base, skip." >> "$LOG"
     continue
   fi
   thumb_media_id=$(upload_image "$cover")
