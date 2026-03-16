@@ -26,3 +26,4 @@
 
 ## Image Gen (if configured)
 - Generate one cover image per article from title/abstract. Save to `wechat_factory/05_assets/images/` with name like `YYYY-MM-DD_MED_cover.png`.
+- **Gemini (Nano Banana)**：Run `python scripts/gemini-gen-images.py wechat_factory/04_output/YYYY-MM-DD/MED_article.md` to create 1 cover + 2–3 figures; requires `GEMINI_API_KEY` and `pip install -r requirements.txt`. See IMPLEMENTATION.md 4.5.

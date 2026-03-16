@@ -8,7 +8,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # Load WeChat credentials (e.g. for cron); optional if already in environment
 [[ -f "$HOME/.wechat-env" ]] && source "$HOME/.wechat-env"
-[[ -f "$HOME/wechat-env" ]] && source "$HOME/wechat-env"
 DATE="${1:-$(date +%Y-%m-%d)}"
 OUT_DIR="$ROOT/wechat_factory/04_output/$DATE"
 IMG_DIR="$ROOT/wechat_factory/05_assets/images"

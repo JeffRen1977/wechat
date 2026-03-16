@@ -1,0 +1,4 @@
+# For Gemini (Nano Banana) image generation script
+google-genai>=1.0.0
+# Pillow used by script if part.as_image() returns PIL Image
+Pillow>=9.0.0

@@ -503,6 +503,25 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 - **03_templates/viral_titles.txt**：已加入多条高点击标题句式，每行一句；Agent 可据此生成并择优。
 - **03_templates/article_style.md**：已规定单 H1、H2/H3、段落/加粗/引用/列表、配图路径（`05_assets/images/`），与 DESIGN、PUBLISHING 一致。
 
+**4.5 图像生成（Gemini Nano Banana）**
+
+- 文章写入 `04_output/YYYY-MM-DD/*.md` 后，可用 **Gemini 原生图像生成（Nano Banana）** 自动生成 **1 张封面 + 2～3 张正文配图**，落地到 `05_assets/images/`，供公众号上传使用。
+- **脚本**：`scripts/gemini-gen-images.py`
+  - 依赖：`pip install -r requirements.txt`（`google-genai`、`Pillow`）；环境变量 **GEMINI_API_KEY** 或 **GOOGLE_API_KEY**。
+  - 默认模型：`gemini-2.5-flash-image`（Nano Banana）；可通过 `GEMINI_IMAGE_MODEL` 改为 `gemini-3.1-flash-image-preview`（Nano Banana 2）等。
+  - 用法示例：
+    ```bash
+    # 从文章路径自动推断日期与前缀（如 2026-03-15, MED）
+    python scripts/gemini-gen-images.py wechat_factory/04_output/2026-03-15/MED_article.md
+    # 指定日期与前缀、正文配图数量
+    python scripts/gemini-gen-images.py wechat_factory/04_output/2026-03-15/MED_article.md --date 2026-03-15 --prefix MED --num-figs 3
+    # 仅打印将使用的 prompt，不调 API
+    python scripts/gemini-gen-images.py wechat_factory/04_output/2026-03-15/MED_article.md --dry-run
+    ```
+  - 产出：`05_assets/images/YYYY-MM-DD_PREFIX_cover.png`、`YYYY-MM-DD_PREFIX_fig1.png`、`fig2.png`（及可选 fig3）。封面可直接被 `wechat-draft-upload.sh` 使用；正文配图可在 Markdown 中引用或在转 HTML 后由发布流程上传。
+  - **中文说明**：脚本使用**英文 prompt** 且要求**图像中不出现任何文字/字符**，避免模型渲染中文时出错；配图按领域前缀（MED/FIN/EDU）生成主题，不把文章中文标题或段落传入图像描述。
+- **与流水线衔接**：可在 OpenClaw 完成撰稿并写入 04_output 后，由 Cron 或人工执行上述脚本，再运行 `wechat-draft-upload.sh`；也可在 Agent 指令中约定「撰稿完成后调用 `scripts/gemini-gen-images.py` 生成封面与配图」。
+
 ---
 
 ### Phase 5: 测试与上线
@@ -595,12 +614,12 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 1. **封面图**：公众号 API 要求每篇必有封面。将封面放到 `wechat_factory/05_assets/images/`，命名：`YYYY-MM-DD_MED_cover.png`（或 `.jpg`）。例如 2026-03-15 的医疗篇即 `2026-03-15_MED_cover.png`。无封面时 `wechat-draft-upload.sh` 会跳过该篇。
 
-2. **凭证**：脚本会自动加载 `~/.wechat-env` 或 `~/wechat-env`（若存在）；也可在 shell 中手动设置（勿提交到 Git）：
+2. **凭证**：脚本会自动加载 `~/.wechat-env`（若存在）；也可在 shell 中手动设置（勿提交到 Git）：
    ```bash
    export WECHAT_APPID="你的AppID"
    export WECHAT_SECRET="你的AppSecret"
    ```
-   - **凭证文件**：将上述两行写入 `~/.wechat-env` 或 `~/wechat-env`，`chmod 600`，则脚本在 cron 或非交互 shell 下也能读到；交互终端下也可用 `~/.bashrc` 导出，再执行脚本。
+   - **凭证文件**：将上述两行写入 `~/.wechat-env`，`chmod 600`，则脚本在 cron 或非交互 shell 下也能读到；交互终端下也可用 `~/.bashrc` 导出，再执行脚本。
    **如何获取 AppID 与 AppSecret**：
    - **推荐路径（可查看/重置 AppSecret）**：使用 [**微信开发者平台**](https://developers.weixin.qq.com/platform/)（注意不是公众平台 mp.weixin.qq.com）。  
      1. 打开 https://developers.weixin.qq.com/platform/ ，用**微信扫码登录**。  
@@ -612,7 +631,7 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 3. **上传草稿**：
    ```bash
-   source ~/wechat-env   # 若未在 .bashrc 中导出，则先加载
+   source ~/.wechat-env   # 若未在 .bashrc 中导出，则先加载
    ./scripts/wechat-draft-upload.sh 2026-03-15
    ```
    成功会输出 `media_id=...`，并在公众号后台「草稿箱」中看到该图文。脚本不传自定义摘要（digest），由微信按正文前 54 字自动生成，避免 45004（description size out of limit）。
@@ -691,6 +710,7 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 | **推荐 MCP / 实现** | **dalle-node**、**flux-mcp** 或其它 Image Gen 类 MCP；若 OpenClaw 有内置 `image` 工具且支持文生图，也可使用。 |
 | **配置要点** | 在 `mcpServers` 中配置对应 Image MCP，传入 API Key 或本地模型地址；在 TOOLS.md 中约定输出目录为 `wechat_factory/05_assets/images/` 及命名规则（如 `YYYY-MM-DD_MED_cover.png`）。 |
 | **TOOLS.md 建议描述** | “Image Gen：根据文章标题或摘要生成一张科技感封面图，保存到 wechat_factory/05_assets/images/，文件名含日期与领域标识。” |
+| **本项目脚本** | 使用 Gemini（Nano Banana）时，可运行 `scripts/gemini-gen-images.py <article.md>` 生成 1 封面 + 2～3 张配图；见 4.5。 |
 
 ---
 

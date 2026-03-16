@@ -1,4 +1,5 @@
 .openclaw/
+.venv/
 .env
 *.key
 secrets*
