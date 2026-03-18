@@ -22,6 +22,8 @@
 - 示例：2025-01-10 | Multimodal fusion for ICU outcome prediction | arXiv:2501.xxxxx
 - 2026-03-15 | A prospective clinical feasibility study of a conversational diagnostic AI in an ambulatory primary care clinic | arXiv:2603.08448
 - 2026-03-15 | MedPruner: Training-Free Hierarchical Token Pruning for Efficient 3D Medical Image Understanding in Vision-Language Models | arXiv:2603.11625
+- 2026-03-17 | First in-vivo human magnetic particle imaging | arXiv:2603.12010
+- 2026-03-17 | Decomposing Physician Disagreement in HealthBench | arXiv:2602.22758
 
 ## 政策与趋势摘要
 

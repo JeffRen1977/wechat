@@ -32,12 +32,20 @@ if [[ -z "$WECHAT_ACCESS_TOKEN" ]]; then
   fi
 fi
 
-# Upload one image and return media_id
+# Upload one image as permanent material (cover) and return media_id
 upload_image() {
   local path="$1"
   if [[ ! -f "$path" ]]; then return 1; fi
   curl -s -X POST "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=$WECHAT_ACCESS_TOKEN&type=image" \
     -F "media=@$path" | jq -r '.media_id'
+}
+
+# Upload an in-article image and return the WeChat-hosted URL (for <img src="...">)
+upload_body_image() {
+  local path="$1"
+  if [[ ! -f "$path" ]]; then echo ""; return; fi
+  curl -s -X POST "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=$WECHAT_ACCESS_TOKEN" \
+    -F "media=@$path" | jq -r '.url'
 }
 
 # Convert MD to WeChat-friendly HTML (body-only, inline styles; WeChat ignores <style>)
@@ -90,6 +98,45 @@ for md in "$OUT_DIR"/*.md; do
   fi
   title=$(get_title "$md" "$base")
   content=$(md_to_wechat_html "$md")
+
+  # Replace local image src paths in HTML with WeChat-hosted URLs for body images.
+  # We look for <img ... src="..."> and, for any src that points under 05_assets/images,
+  # upload the corresponding file via upload_body_image, then rewrite the src.
+  tmp_html="$content"
+  img_re='<img[^>]*src="([^"]+)"[^>]*>'
+  while [[ "$tmp_html" =~ $img_re ]]; do
+    img_tag="${BASH_REMATCH[0]}"
+    src="${BASH_REMATCH[1]}"
+    # Only rewrite non-HTTP(S) sources (local images)
+    if [[ "$src" != http://* && "$src" != https://* ]]; then
+      img_path=""
+      if [[ "$src" == *"05_assets/images/"* ]]; then
+        # Normalize anything containing 05_assets/images/ to IMG_DIR/<rest>
+        rel="${src#*05_assets/images/}"
+        img_path="$IMG_DIR/$rel"
+      else
+        # Fallback: resolve relative to the Markdown file directory
+        img_dir="$(cd "$(dirname "$md")" && pwd)"
+        if [[ -n "$img_dir" ]]; then
+          # Use subshell to avoid changing cwd
+          img_path="$(cd "$img_dir" && realpath "$src" 2>/dev/null || echo "")"
+        fi
+      fi
+      if [[ -n "$img_path" && -f "$img_path" ]]; then
+        img_url=$(upload_body_image "$img_path")
+        if [[ -n "$img_url" && "$img_url" != "null" ]]; then
+          # Replace all occurrences of this src with the WeChat URL in the full content
+          content="${content//$src/$img_url}"
+        else
+          echo "Upload body image failed for $img_path" >> "$LOG"
+        fi
+      else
+        echo "Body image path not found for src=$src (md=$md)" >> "$LOG"
+      fi
+    fi
+    # Move past this <img> to find the next one
+    tmp_html="${tmp_html#*${img_tag}}"
+  done
   # Omit digest so WeChat auto-fills from content (avoids 45004 description size limit)
   one=$(jq -n \
     --arg title "$title" \

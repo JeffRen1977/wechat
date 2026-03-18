@@ -19,6 +19,7 @@
 - 示例：2025-01-14 | Knowledge tracing with large language models | ACL / EMNLP
 - 示例：2025-01-09 | Multimodal feedback for math problem solving | AIED / EDM
 - 2026-03-15 | Scaling Laws for Educational AI Agents | arXiv:2603.11709
+- 2026-03-17 | ELLA: Generative AI-Powered Social Robots for Early Language Development at Home | arXiv:2603.12508
 
 ## 政策与技术摘要
 

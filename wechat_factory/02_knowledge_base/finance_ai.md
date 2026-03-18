@@ -20,6 +20,8 @@
 - 示例：2025-01-08 | Reinforcement learning in portfolio optimization | Journal of Finance (或等价来源)
 - 2026-03-15 | Regime-aware financial volatility forecasting via in-context learning | arXiv:2603.10299
 - 2026-03-15 | FinToolBench: Evaluating LLM Agents for Real-World Financial Tool Use | arXiv:2603.08262
+- 2026-03-17 | Autonomous AI Agents for Option Hedging: Enhancing Financial Stability through Shortfall Aware Reinforcement Learning | arXiv:2603.06587
+- 2026-03-17 | AIForge-Doc: A Benchmark for Detecting AI-Forged Tampering in Financial and Form Documents | arXiv:2602.20569
 
 ## 行业趋势摘要
 

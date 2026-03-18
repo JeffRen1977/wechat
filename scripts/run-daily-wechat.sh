@@ -8,7 +8,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE="$(cd "$SCRIPT_DIR/.." && pwd)"
 DATE="$(date +%Y-%m-%d)"
 LOG="${LOG:-/tmp/wechat-pipeline.log}"
-export PATH="${PATH:-/usr/local/bin:/usr/bin:/bin}"
+# Ensure openclaw (installed via nvm) is on PATH even under cron
+export PATH="/home/renjeff/.nvm/versions/node/v22.22.0/bin:/usr/local/bin:/usr/bin:/bin:${PATH}"
 cd "$WORKSPACE"
 
 echo "[$(date -Iseconds)] Step 1/2: OpenClaw agent (search, parse, write 5 articles to 04_output/$DATE)." >> "$LOG"
