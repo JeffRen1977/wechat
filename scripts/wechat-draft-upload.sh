@@ -81,7 +81,6 @@ find_cover() {
   return 1
 }
 
-ARTICLES_JSON=""
 for md in "$OUT_DIR"/*.md; do
   [[ -f "$md" ]] || continue
   base=$(basename "$md" .md)
@@ -137,31 +136,23 @@ for md in "$OUT_DIR"/*.md; do
     # Move past this <img> to find the next one
     tmp_html="${tmp_html#*${img_tag}}"
   done
-  # Omit digest so WeChat auto-fills from content (avoids 45004 description size limit)
+  # Build a single-article payload so each .md becomes its own draft.
   one=$(jq -n \
     --arg title "$title" \
     --arg content "$content" \
     --arg thumb "$thumb_media_id" \
     '{article_type:"news",title:$title,content:$content,thumb_media_id:$thumb,need_open_comment:0,only_fans_can_comment:0}')
-  if [[ -z "$ARTICLES_JSON" ]]; then ARTICLES_JSON="$one"; else ARTICLES_JSON="$ARTICLES_JSON,$one"; fi
+
+  BODY="{\"articles\":[${one}]}"
+  RESP=$(curl -s -X POST "https://api.weixin.qq.com/cgi-bin/draft/add?access_token=$WECHAT_ACCESS_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "$BODY")
+  media_id=$(echo "$RESP" | jq -r '.media_id')
+  if [[ -z "$media_id" || "$media_id" == "null" ]]; then
+    echo "draft/add failed for $base: $RESP" >> "$LOG"
+    echo "draft/add failed for $base: $RESP" >&2
+    continue
+  fi
+  echo "[$(date -Iseconds)] Draft uploaded for $base: media_id=$media_id (date=$DATE)" >> "$LOG"
+  echo "media_id=$media_id ($base)"
 done
-
-if [[ -z "$ARTICLES_JSON" ]]; then
-  echo "No articles built. Check covers in $IMG_DIR and MD in $OUT_DIR." >> "$LOG"
-  echo "No articles built. See $LOG" >&2
-  exit 1
-fi
-
-# POST draft/add
-BODY="{\"articles\":[$ARTICLES_JSON]}"
-RESP=$(curl -s -X POST "https://api.weixin.qq.com/cgi-bin/draft/add?access_token=$WECHAT_ACCESS_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d "$BODY")
-media_id=$(echo "$RESP" | jq -r '.media_id')
-if [[ -z "$media_id" || "$media_id" == "null" ]]; then
-  echo "draft/add failed: $RESP" >> "$LOG"
-  echo "draft/add failed: $RESP" >&2
-  exit 1
-fi
-echo "[$(date -Iseconds)] Draft uploaded: media_id=$media_id (date=$DATE)" >> "$LOG"
-echo "media_id=$media_id"
