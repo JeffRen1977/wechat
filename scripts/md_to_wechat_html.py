@@ -37,6 +37,61 @@ def pandoc_to_html(md_path: Path) -> str:
     return result.stdout
 
 
+def fix_list_items_for_wechat(html: str) -> str:
+    """
+    WeChat often renders <li><p>...</p></li> as empty bullets (drops inner <p>).
+    Merge all <p> inside each <li> into one line with <br/> separators.
+    """
+    li_wrap = re.compile(
+        r"<li([^>]*)>((?:\s*<p[^>]*>[\s\S]*?</p>\s*)+)</li>",
+        re.IGNORECASE,
+    )
+
+    def merge_li(m: re.Match) -> str:
+        attrs, inner = m.group(1), m.group(2)
+        parts = re.findall(r"<p[^>]*>([\s\S]*?)</p>", inner, flags=re.IGNORECASE)
+        chunks = [p.strip() for p in parts if p and p.strip()]
+        if not chunks:
+            return ""
+        merged = "<br/>".join(chunks)
+        return f"<li{attrs}>{merged}</li>"
+
+    prev = None
+    while prev != html:
+        prev = html
+        html = li_wrap.sub(merge_li, html)
+    # Drop empty list items
+    html = re.sub(r"<li[^>]*>\s*</li>", "", html, flags=re.IGNORECASE)
+    html = re.sub(r"<li[^>]*>\s*<br\s*/?>\s*</li>", "", html, flags=re.IGNORECASE)
+    return html
+
+
+def add_emphasis_inline_styles(html: str) -> str:
+    """WeChat keeps <strong>/<b> more reliably with explicit font-weight."""
+    bold = "font-weight:bold;color:#1a1a1a"
+
+    def strong_repl(m: re.Match) -> str:
+        rest = m.group(1)
+        if not rest.strip():
+            return f'<strong style="{bold}">'
+        if "style=" in rest.lower():
+            return m.group(0)
+        return f'<strong style="{bold}" {rest.strip()}>'
+
+    html = re.sub(r"<strong([^>]*)>", strong_repl, html, flags=re.IGNORECASE)
+
+    def b_repl(m: re.Match) -> str:
+        rest = m.group(1)
+        if not rest.strip():
+            return f'<b style="{bold}">'
+        if "style=" in rest.lower():
+            return m.group(0)
+        return f'<b style="{bold}" {rest.strip()}>'
+
+    html = re.sub(r"<b([^>]*)>", b_repl, html, flags=re.IGNORECASE)
+    return html
+
+
 def extract_body(html: str) -> str:
     # Get content between <body> and </body>; strip the body tags.
     m = re.search(r"<body[^>]*>(.*)</body>", html, re.DOTALL | re.IGNORECASE)
@@ -89,6 +144,8 @@ def main() -> None:
         print("", end="")
         return
     body = extract_body(raw)
+    body = fix_list_items_for_wechat(body)
+    body = add_emphasis_inline_styles(body)
     out = add_inline_styles(body)
     if len(out) > max_chars:
         out = out[:max_chars]

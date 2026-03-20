@@ -1,14 +1,36 @@
 ---
 name: wechat_daily_editor
-description: Run the daily wechat_factory pipeline: search → read → title → write → save (5 articles).
+description: Daily wechat_factory pipeline — exactly 3 articles (EDU, MED health, FIN). Default source is YouTube latest trends; tone 生动有趣、浅显易懂. Papers only when user asks.
 ---
 
 # Wechat Daily Editor
 
 When the user says "run today's wechat pipeline" or "执行今日公众号任务":
+
 1. Create `wechat_factory/04_output/YYYY-MM-DD/` if not exists.
-2. For each domain (MED, FIN, EDU, plus two more as configured): use Search to find one recent paper, fetch or download to 01_sources, parse (PDF or snapshot), then read 02_knowledge_base and 03_templates/viral_titles.txt and article_style.md, draft one article 1500–2000 chars, write to 04_output/YYYY-MM-DD/<DOMAIN>_article.md.
-3. **Update knowledge base for dedup**: After each article, append one line to the domain's knowledge base under 「已解析论文」 in format: `日期 | 标题 | 来源`. Use `02_knowledge_base/medical_ai.md` for MED, `finance_ai.md` for FIN, `edu_ai.md` for EDU. This avoids reusing the same paper later.
-4. For each article: generate **1 cover + 2 content images** (run `./scripts/run-gemini-images.sh wechat_factory/04_output/YYYY-MM-DD/<PREFIX>_article.md` for each .md). Saves to 05_assets/images/ as DATE_PREFIX_cover.png, DATE_PREFIX_fig1.png, DATE_PREFIX_fig2.png.
-5. After images: upload to WeChat draft (run `./scripts/wechat-draft-upload.sh` with the date, or run `./scripts/generate-images-and-upload.sh` to do images for all articles then upload in one go).
-6. Do not delete 02_knowledge_base or 03_templates.
+
+2. **Exactly three articles** — one file each (no `_2` unless user explicitly asks for more):
+   - **Education:** `EDU_article.md`
+   - **Health / 健康:** `MED_article.md` (health, wellness, 医学科普 — not necessarily “medical AI paper”)
+   - **Finance / 财经:** `FIN_article.md`
+
+3. **Source mode (default = YouTube + 最新趋势)**  
+   Unless the user explicitly asks for **papers only** / **学术论文** / **arXiv**:
+   - For **each** of the three domains above, find **one** recent, trending YouTube video (past **24–72 hours** when possible): education, health, finance respectively.
+   - Open URLs with browser tools; save snapshots to `wechat_factory/01_sources/web_snapshots/` as `YYYY-MM-DD_EDU_youtube_<slug>.txt`, `_MED_youtube_...`, `_FIN_youtube_...`.
+   - Capture title, description, transcript/captions (or description + chapters if no transcript).
+   - **Tone:** 生动有趣、浅显易懂 — 像跟朋友讲「最近网上在聊什么」；专业词用人话一句带过；可加设问、类比；保留来源链接供知识库记录。
+
+4. **Papers mode** — only if user says **只要论文** / **papers only** / **学术来源**:  
+   One recent paper per domain → same three filenames `EDU_article.md`, `MED_article.md`, `FIN_article.md`, same tone where possible.
+
+5. **Knowledge base:** After each article, append `日期 | 标题 | 来源` to the matching `02_knowledge_base/*.md` (YouTube URL or paper link).
+
+6. **Images + upload:** Run `./scripts/run-gemini-images.sh` for each of the three `.md` files; then `./scripts/wechat-draft-upload.sh` or `./scripts/generate-images-and-upload.sh` for that date.
+
+7. Do not delete `02_knowledge_base` or `03_templates`.
+
+## Trigger phrases
+
+- Default: "执行今日公众号任务", "run today's wechat pipeline" → **3 篇**，EDU + MED + FIN.
+- Papers only: "今日只要论文", "use papers only today".

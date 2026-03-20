@@ -1,12 +1,15 @@
 # Tools for wechat_factory Pipeline
 
 ## Deep Search (duckduckgo_search / web_search / brave_search)
-- Use to find **latest AI papers** (past 24–48 hours). Prefer sources: Nature, Lancet, arXiv, PubMed.
+- **Default (daily editor):** Find **YouTube** content on **latest trends** in **education, health, finance** — past **24–72 hours**, high relevance / buzz (e.g. `site:youtube.com` + 教育/财经/健康 + 最新/本周/热点). Pick videos per domain (EDU / MED-health / FIN). See `skills/wechat-daily-editor/SKILL.md`.
+- **Papers (when user asks):** Latest AI / domain papers (24–48h). Prefer Nature, Lancet, arXiv, PubMed.
+- **YouTube**: Also e.g. channel name + `latest video`, `YouTube finance news this week`.
 - Free option: OpenClaw built-in `web_search` (group:web) or DuckDuckGo MCP (`duckduckgo-search`); no API key required.
 - Example intent: "Search for recent medical AI papers in Nature Medicine."
 
 ## Web Browser (browser / puppeteer)
 - Use to **open a URL** and save full text or HTML to `wechat_factory/01_sources/web_snapshots/`.
+- **YouTube**: Open the watch URL; capture **title, description, transcript/captions** if shown on the page (or copy visible text). Save as `YYYY-MM-DD_<domain>_youtube_<slug>.txt` (e.g. `2026-03-20_EDU_youtube_khan.txt`). If no transcript, use description + chapter titles + on-page metadata.
 - Filename format: `YYYY-MM-DD_<domain>_<slug>.html` or `.txt`.
 
 ## PDF Parser

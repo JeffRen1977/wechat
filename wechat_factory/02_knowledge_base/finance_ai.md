@@ -22,6 +22,10 @@
 - 2026-03-15 | FinToolBench: Evaluating LLM Agents for Real-World Financial Tool Use | arXiv:2603.08262
 - 2026-03-17 | Autonomous AI Agents for Option Hedging: Enhancing Financial Stability through Shortfall Aware Reinforcement Learning | arXiv:2603.06587
 - 2026-03-17 | AIForge-Doc: A Benchmark for Detecting AI-Forged Tampering in Financial and Form Documents | arXiv:2602.20569
+- 2026-03-18 | Modal Logical Neural Networks for Financial AI | arXiv:2603.12487
+- 2026-03-18 | FinRetrieval: A Benchmark for Financial Data Retrieval by AI Agents | arXiv:2603.04403
+- 2026-03-19 | GPT4o-Receipt: A Dataset and Human Study for AI-Generated Document Forensics | arXiv:2603.11442
+- 2026-03-19 | When AI Levels the Playing Field: Skill Homogenization, Asset Concentration, and Two Regimes of Inequality | arXiv:2603.05565
 
 ## 行业趋势摘要
 

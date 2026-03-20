@@ -24,6 +24,10 @@
 - 2026-03-15 | MedPruner: Training-Free Hierarchical Token Pruning for Efficient 3D Medical Image Understanding in Vision-Language Models | arXiv:2603.11625
 - 2026-03-17 | First in-vivo human magnetic particle imaging | arXiv:2603.12010
 - 2026-03-17 | Decomposing Physician Disagreement in HealthBench | arXiv:2602.22758
+- 2026-03-18 | MAPLE: Elevating Medical Reasoning from Statistical Consensus to Process-Led Alignment | arXiv:2603.08987
+- 2026-03-18 | Beyond Benchmarks: Dynamic, Automatic And Systematic Red-Teaming Agents For Trustworthy Medical Language Models | arXiv:2508.00923
+- 2026-03-19 | Designing with Medical Mistrust: Perspectives from Black Older Adults in Publicly Subsidized Housing | arXiv:2603.03416
+- 2026-03-19 | Federated Learning for Privacy-Preserving Medical AI | arXiv:2603.15901
 
 ## 政策与趋势摘要
 

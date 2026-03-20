@@ -217,7 +217,7 @@
   ```markdown
   # Agents in this workspace
 
-  - **main** (default agent): Runs the daily wechat_factory pipeline (5 articles). Workspace paths are relative to this directory; output goes to `wechat_factory/04_output/YYYY-MM-DD/`.
+  - **main** (default agent): Runs the daily wechat_factory pipeline (3 articles: EDU, MED, FIN). Workspace paths are relative to this directory; output goes to `wechat_factory/04_output/YYYY-MM-DD/`.
   ```
 
 - **SOUL.md**（Agent 人格与行为边界，可按需精简）：
@@ -245,7 +245,7 @@
 |------|--------|---------|
 | 2.1 | 在 `~/.openclaw/openclaw.json` 中仅配置 `tools`（不添加 `mcpServers`），见下方 2.1 详细 | 为 Agent 提供搜索、文件、浏览器等内置能力 |
 | 2.2 | 在 workspace 的 `TOOLS.md` 中列出本项目会用到的工具及用途（给 Agent 看的说明） | 引导 Agent 在正确场景调用正确工具 |
-| 2.3 | 可选：在 `workspace/skills/` 下为 wechat 流水线写专用 Skill（如 `wechat-daily-editor`），在 SKILL.md 中引用 MCP 工具与步骤 | 把「每日 5 篇」流程固化为可复用技能 |
+| 2.3 | 可选：在 `workspace/skills/` 下为 wechat 流水线写专用 Skill（如 `wechat-daily-editor`），在 SKILL.md 中引用 MCP 工具与步骤 | 把「每日 3 篇（EDU/MED/FIN）」流程固化为可复用技能 |
 | 2.4 | 重启 Gateway；若已配置 MCP，执行 `openclaw mcp list` 校验；否则确认 `tools.allow` 含 `group:web` 等即可 | 确保工具在运行时可用 |
 
 #### Phase 2 详细设置
@@ -324,15 +324,15 @@
   ```markdown
   ---
   name: wechat_daily_editor
-  description: Run the daily wechat_factory pipeline: search → read → title → write → save (5 articles).
+  description: Run the daily wechat_factory pipeline: search → read → title → write → save (3 articles: EDU, MED, FIN).
   ---
 
   # Wechat Daily Editor
 
   When the user says "run today's wechat pipeline" or "执行今日公众号任务":
   1. Create `wechat_factory/04_output/YYYY-MM-DD/` if not exists.
-  2. For each domain (MED, FIN, EDU, plus two more as configured): use Search to find one recent paper, fetch or download to 01_sources, parse (PDF or snapshot), then read 02_knowledge_base and 03_templates/viral_titles.txt and article_style.md, draft one article 1500–2000 chars, write to 04_output/YYYY-MM-DD/<DOMAIN>_article.md.
-  3. Optionally generate cover images to 05_assets/images/.
+  2. Write exactly three files: `EDU_article.md`, `MED_article.md`, `FIN_article.md` (education, health, finance). Default sources: YouTube latest trends per domain; papers only if user asks.
+  3. Then images + upload per skills/wechat-daily-editor/SKILL.md.
   4. Do not delete 02_knowledge_base or 03_templates.
   ```
 
@@ -394,7 +394,7 @@ workspace 即 wechat 项目根，内含 **AGENTS.md**、**SOUL.md**、**TOOLS.md
 
 - **AGENTS.md**：说明本 workspace 用于 wechat_factory，输出到 `wechat_factory/04_output/YYYY-MM-DD/`。
 - **SOUL.md**：约束 Agent 专注流水线、不删除 knowledge_base/templates、参考 TOOLS.md。
-- **skills/wechat-daily-editor/SKILL.md**：当用户说「执行今日公众号任务」或「run today's wechat pipeline」时，按步骤执行扫描→抓取→拟题→撰稿→保存（详见该文件）。
+- **skills/wechat-daily-editor/SKILL.md**：当用户说「执行今日公众号任务」或「run today's wechat pipeline」时，按步骤产出 **3 篇**（EDU/MED/FIN）并保存（详见该文件）。
 
 无需在 `~/.openclaw/agents/` 下创建 wechat-editor 或 INSTRUCTIONS.md。
 
@@ -409,10 +409,10 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
   # 每天 8:00
   0 8 * * * /home/renjeff/Documents/projects/wechat/scripts/run-daily-wechat.sh
   ```
-  脚本内部调用 `openclaw agent --message "执行今日公众号任务，产出 5 篇并保存到 04_output"`。
+  脚本内部调用 `openclaw agent`，消息要求产出 **3 篇**（`EDU_article.md`、`MED_article.md`、`FIN_article.md`），详见 `scripts/run-daily-wechat.sh`。
 - **方式 B**：直接写 cron（需保证 cron 运行时 `openclaw` 在 PATH 且当前目录或环境正确）：
   ```bash
-  0 8 * * * cd /home/renjeff/Documents/projects/wechat && openclaw agent --message "执行今日公众号任务，产出 5 篇并保存到 04_output" >> /tmp/wechat-pipeline.log 2>&1
+  0 8 * * * cd /home/renjeff/Documents/projects/wechat && ./scripts/run-daily-wechat.sh >> /tmp/wechat-pipeline.log 2>&1
   ```
   实际命令需根据 OpenClaw 的 CLI 用法调整（如 `openclaw run`、`openclaw chat` 等）。
 - 或使用 OpenClaw 自带的 **cron** 工具（若已启用）：在界面或配置中添加每日任务，消息内容同上。
@@ -521,7 +521,7 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
   - 产出：`05_assets/images/YYYY-MM-DD_PREFIX_cover.png`、`YYYY-MM-DD_PREFIX_fig1.png`、`fig2.png`（及可选 fig3）。封面可直接被 `wechat-draft-upload.sh` 使用；正文配图可在 Markdown 中引用或在转 HTML 后由发布流程上传。
   - **中文说明**：脚本使用**英文 prompt** 且要求**图像中不出现任何文字/字符**，避免模型渲染中文时出错；配图按领域前缀（MED/FIN/EDU）生成主题，不把文章中文标题或段落传入图像描述。
 - **与流水线衔接**：可在 OpenClaw 完成撰稿并写入 04_output 后，由 Cron 或人工执行上述脚本，再运行 `wechat-draft-upload.sh`；也可在 Agent 指令中约定「撰稿完成后调用 `scripts/gemini-gen-images.py` 生成封面与配图」。
-- **每篇 1 封面 + 2 配图并上传公众号**：使用 **`scripts/generate-images-and-upload.sh [YYYY-MM-DD]`**。该脚本会：对当日 `04_output/YYYY-MM-DD/` 下每篇 .md 调用 `run-gemini-images.sh`（生成 1 封面 + 2 张 fig1/fig2），然后执行 `wechat-draft-upload.sh` 将全部文章上传到公众号草稿箱。需配置 `~/.gemini-env`（GEMINI_API_KEY）与 `~/.wechat-env`（公众号凭证）。Cron 可在每日 8:00 流水线之后（如 9:00）执行此脚本，实现「5 篇 → 每篇 3 图 → 上传草稿」一条龙。
+- **每篇 1 封面 + 2 配图并上传公众号**：使用 **`scripts/generate-images-and-upload.sh [YYYY-MM-DD]`**。该脚本会：对当日 `04_output/YYYY-MM-DD/` 下每篇 .md 调用 `run-gemini-images.sh`（生成 1 封面 + 2 张 fig1/fig2），然后执行 `wechat-draft-upload.sh` 将全部文章上传到公众号草稿箱。需配置 `~/.gemini-env`（GEMINI_API_KEY）与 `~/.wechat-env`（公众号凭证）。Cron 可在每日 8:00 流水线之后（如 9:00）执行此脚本，实现「3 篇（EDU/MED/FIN）→ 每篇 3 图 → 上传草稿」一条龙。
 
 ---
 
@@ -531,7 +531,7 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 |------|--------|---------|
 | 5.1 | 单链路测试：手动触发一次「单领域单篇」（见 Part C） | 验证 感知→认知→创作→存储 全链路 |
 | 5.2 | 工具级测试：分别验证搜索、抓取、PDF 解析、写文件、图像生成 | 快速定位故障点 |
-| 5.3 | 日产出测试：连续 2～3 天跑满 5 篇，检查 04_output 与 05_assets | 验证产能与稳定性 |
+| 5.3 | 日产出测试：连续 2～3 天跑满 3 篇（EDU/MED/FIN），检查 04_output 与 05_assets | 验证产能与稳定性 |
 | 5.4 | 发布链测试：Markdown → HTML → 公众号后台粘贴（或 API） | 验证最后一公里 |
 
 #### Phase 5 详细操作
@@ -605,11 +605,11 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 **5.3 日产出测试**
 
-- 连续 2～3 天在固定时间触发“执行今日公众号任务”（或依赖 Cron）。每天检查 `04_output/YYYY-MM-DD/` 下是否有 5 个 md 文件、命名正确、内容非空；检查 Cron 与 Git 是否按 4.3 执行。
-- **验证 5 篇是否产出**（在项目根目录）：
+- 连续 2～3 天在固定时间触发“执行今日公众号任务”（或依赖 Cron）。每天检查 `04_output/YYYY-MM-DD/` 下是否有 **3 个** md 文件：`EDU_article.md`、`MED_article.md`、`FIN_article.md`，内容非空；检查 Cron 与 Git 是否按 4.3 执行。
+- **验证 3 篇是否产出**（在项目根目录）：
   ```bash
   DATE=$(date +%Y-%m-%d)
-  ls wechat_factory/04_output/$DATE/*.md 2>/dev/null | wc -l    # 应为 5
+  ls wechat_factory/04_output/$DATE/*.md 2>/dev/null | wc -l    # 至少为 3（可有 INBOX 等额外文件）
   ls wechat_factory/04_output/$DATE/
   ```
   若 Cron 触发，可查看 `/tmp/wechat-pipeline.log` 确认脚本是否执行及 `openclaw agent` 的返回。
@@ -771,8 +771,8 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 ### C.3 日产出与稳定性测试
 
-- 连续 2～3 天定时触发「每日 5 篇」流程。
-- 检查：`04_output/YYYY-MM-DD/` 下是否每天 5 个文件、命名正确、内容非空；Cron 与 Git 是否按预期执行；OpenClaw 崩溃后 Cron 是否能重启任务。
+- 连续 2～3 天定时触发「每日 3 篇（EDU/MED/FIN）」流程。
+- 检查：`04_output/YYYY-MM-DD/` 下是否每天有上述三篇核心文件、命名正确、内容非空；Cron 与 Git 是否按预期执行；OpenClaw 崩溃后 Cron 是否能重启任务。
 
 ### C.4 发布链测试
 
@@ -793,7 +793,7 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 ### D.2 多 Agent 分工（可选）
 
-- **当前实现**：单 Agent（main）专门执行「每日 5 篇」流程；绑定 Cron 或定时触发；工具开放 `group:fs`、`group:web`、browser 等。
+- **当前实现**：单 Agent（main）专门执行「每日 3 篇（EDU/MED/FIN）」流程；绑定 Cron 或定时触发；工具开放 `group:fs`、`group:web`、browser 等。
 - **若日后用多 Agent**：可增加 wechat-editor，绑定 Cron 或通道；其他 Agent 可限制为 `tools.profile: "messaging"` 等，避免误动 wechat_factory。
 
 ### D.3 指令与记忆

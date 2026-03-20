@@ -23,7 +23,7 @@ Create `wechat_factory/04_output/YYYY-MM-DD/` if it does not exist (use today’
 
 ## Step 2: Get the source
 
-- **If the user provided a URL:** Use browser/web tools to open the link. Save the main text or HTML to `wechat_factory/01_sources/web_snapshots/` (e.g. `YYYY-MM-DD_inbox_<slug>.txt` or `.html`). If the link is a PDF, download to `wechat_factory/01_sources/papers_pdf/` and parse with `scripts/extract_pdf_text.sh` or equivalent. Use the fetched content as the source for writing the article.
+- **If the user provided a URL:** Use browser/web tools to open the link. Save the main text or HTML to `wechat_factory/01_sources/web_snapshots/` (e.g. `YYYY-MM-DD_inbox_<slug>.txt` or `.html`). **If the URL is YouTube** (`youtube.com`, `youtu.be`): capture **title, description, transcript/captions** (or visible page text + chapters); save as `YYYY-MM-DD_inbox_youtube_<slug>.txt`. If the link is a PDF, download to `wechat_factory/01_sources/papers_pdf/` and parse with `scripts/extract_pdf_text.sh` or equivalent. Use the fetched content as the source for writing the article.
 - **If the user pasted content:** Use that text directly as the source. Optionally save a copy to `wechat_factory/01_sources/web_snapshots/YYYY-MM-DD_inbox_paste.txt`.
 
 ---
@@ -36,7 +36,7 @@ Read `wechat_factory/03_templates/article_style.md` and `wechat_factory/03_templ
 
 ## Step 4: Write the draft article
 
-Write **one** article (1500–2000 chars, same style as the daily pipeline) to:
+Write **one** article (1500–2000 chars, same style as the daily pipeline) — **生动有趣、浅显易懂**，面向普通读者。Save to:
 
 `wechat_factory/04_output/YYYY-MM-DD/INBOX_article.md`
 
