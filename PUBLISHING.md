@@ -38,3 +38,19 @@
 - **IMPLEMENTATION.md** Phase 4.2 / 4.3：已含 Markdown→HTML；可增加「上传草稿」一步及调用方式。
 
 完成上述后，流水线末端为：**本地 04_output + 05_assets → 转 HTML → 上传图片 → 提交草稿箱**，在公众号后台即可看到带图、正确排版的草稿。
+
+## 6. 为什么会出现「同一篇两份草稿」？
+
+- **`run-daily-wechat.sh`** 在 OpenClaw 写稿结束后会再跑 **`generate-images-and-upload.sh`** → 内部会调用 **`wechat-draft-upload.sh`** 上传**当天文件夹里每一篇** `.md`。
+- 若 Agent 在同一轮任务里**又执行了一次** `wechat-draft-upload.sh` 或 `generate-images-and-upload.sh`，同一篇（如 `EDU_article.md`）会被 **`draft/add` 调两次** → 草稿箱里会出现**两条标题几乎一样的草稿**。
+- **避免方式**：日更任务里由**宿主机脚本统一上传**；已在 `run-daily-wechat.sh` 的提示词与 `skills/wechat-daily-editor/SKILL.md` 中写明 Agent **不要**在日更流程里再跑上传脚本。
+
+**如何自查是否重复上传过**
+
+```bash
+grep 'Draft uploaded' /tmp/wechat-draft-upload.log | tail -30
+```
+
+同一天、同一 `base`（如 `EDU_article`）若出现**两行**时间接近的记录，即曾上传两次。
+
+**注意**：`wechat-draft-upload.sh` 会对**该日期目录下所有** `*.md` 各建一条草稿（例如同时存在 `INBOX_article.md`、`INBOX2_article.md` 时会各上传一篇）——这是**多篇不同文件**，不是脚本 bug；若只想上传 EDU/MED/FIN，需把其它 `.md` 移出该日目录或改脚本过滤（未默认实现）。

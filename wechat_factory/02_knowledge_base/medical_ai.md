@@ -28,6 +28,8 @@
 - 2026-03-18 | Beyond Benchmarks: Dynamic, Automatic And Systematic Red-Teaming Agents For Trustworthy Medical Language Models | arXiv:2508.00923
 - 2026-03-19 | Designing with Medical Mistrust: Perspectives from Black Older Adults in Publicly Subsidized Housing | arXiv:2603.03416
 - 2026-03-19 | Federated Learning for Privacy-Preserving Medical AI | arXiv:2603.15901
+- 2026-03-20 | Healthcare AI in 2026: From Novelty to Normalcy — A Fireside Chat | https://www.youtube.com/watch?v=zmPW0PqZIlY
+- 2026-03-21 | CTeL's March 2026 AI & LLM Working Group | https://www.youtube.com/watch?v=pELFKVkn-cI
 
 ## 政策与趋势摘要
 

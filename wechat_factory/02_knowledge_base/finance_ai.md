@@ -26,6 +26,8 @@
 - 2026-03-18 | FinRetrieval: A Benchmark for Financial Data Retrieval by AI Agents | arXiv:2603.04403
 - 2026-03-19 | GPT4o-Receipt: A Dataset and Human Study for AI-Generated Document Forensics | arXiv:2603.11442
 - 2026-03-19 | When AI Levels the Playing Field: Skill Homogenization, Asset Concentration, and Two Regimes of Inequality | arXiv:2603.05565
+- 2026-03-20 | I tried 100+ AI Tools. These are the Best for Finance | https://www.youtube.com/watch?v=KKmvJZ4irlY
+- 2026-03-21 | The Updated Excel PivotTable Guide for 2026 (+ AI Shortcut) | https://www.youtube.com/watch?v=K3KqOTdypyw
 
 ## 行业趋势摘要
 

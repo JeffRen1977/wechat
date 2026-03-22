@@ -22,6 +22,8 @@
 - 2026-03-17 | ELLA: Generative AI-Powered Social Robots for Early Language Development at Home | arXiv:2603.12508
 - 2026-03-18 | CHiL(L)Grader: Calibrated Human-in-the-Loop Short-Answer Grading | arXiv:2603.11957
 - 2026-03-19 | Chatbot Conversations in Physics Education: Using Artificial Intelligence to Analyze Student Reasoning through Computational Grounded Theory | arXiv:2603.04616
+- 2026-03-20 | AI+Education Summit 2026 | https://www.youtube.com/watch?v=EqouaCgSo-k
+- 2026-03-21 | AI+Education Summit 2026: Inflection Point – A New Purpose for Learning | https://www.youtube.com/watch?v=LC7GUJLpH_Q
 
 ## 政策与技术摘要
 

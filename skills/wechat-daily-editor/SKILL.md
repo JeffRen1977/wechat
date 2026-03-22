@@ -26,7 +26,10 @@ When the user says "run today's wechat pipeline" or "执行今日公众号任务
 
 5. **Knowledge base:** After each article, append `日期 | 标题 | 来源` to the matching `02_knowledge_base/*.md` (YouTube URL or paper link).
 
-6. **Images + upload:** Run `./scripts/run-gemini-images.sh` for each of the three `.md` files; then `./scripts/wechat-draft-upload.sh` or `./scripts/generate-images-and-upload.sh` for that date.
+6. **Images + upload (avoid duplicates):**  
+   - **If this task was started by `run-daily-wechat.sh` (cron / daily script):** Do **not** run `./scripts/wechat-draft-upload.sh` or `./scripts/generate-images-and-upload.sh`. The shell script’s **Step 2** already runs `generate-images-and-upload.sh` after you return—calling upload from the agent **again** creates **a second copy of each draft** in the WeChat draft box.  
+   - You may run `./scripts/run-gemini-images.sh` for each of the three `.md` files **before** you finish (optional); Step 2 will still run image gen for all `.md` in that folder (may regenerate). Safer: **skip image/upload scripts in the agent** for this daily job and let Step 2 handle everything.  
+   - **If the user ran the pipeline only from chat** (no `run-daily-wechat.sh`): after the three files exist, run `./scripts/run-gemini-images.sh` per file, then **once** `./scripts/generate-images-and-upload.sh YYYY-MM-DD` (or `./scripts/wechat-draft-upload.sh` if images already exist).
 
 7. Do not delete `02_knowledge_base` or `03_templates`.
 
