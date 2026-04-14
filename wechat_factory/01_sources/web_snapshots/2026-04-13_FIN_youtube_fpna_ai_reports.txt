@@ -1,0 +1,9 @@
+Title: FP&A Reports Using AI Webinar | April 2026
+Channel: FP&A Professionals Institute (FPI)
+URL: https://www.youtube.com/watch?v=JgTGOEwY9Mw
+Uploaded: 2026-04-10 | Duration: 43m30s
+Description highlights:
+- Replay of the 5 Apr 2026 webinar hosted by Asif Masani & Dhawal Parvatikar.
+- Walkthrough of using AI in Excel for FP&A variance analysis, transforming raw ledgers into narrative-ready board packs, and consolidating multi-entity budgets.
+- Demonstrates workflow to auto-build visuals, annotate management commentary, and keep finance/ops teams aligned on the same “live” file.
+- Target audience: FP&A analysts looking for AI-driven reporting speedups.

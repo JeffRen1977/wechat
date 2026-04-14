@@ -1,0 +1,9 @@
+Title: April 2026 MagicDrop | What's New at MagicSchool
+Channel: MagicSchool AI
+URL: https://www.youtube.com/watch?v=4QR-MUqTwVw
+Uploaded: 2026-04-10 | Duration: 1m44s
+Description highlights:
+- Monthly product drop summary introducing Studio Mode inside the Raina lesson builder so teachers can edit AI outputs without leaving the doc.
+- District admins get new controls: upload logos, export student AI chat threads when auditing usage.
+- MagicQuizzes upgrades (question-level editing, reordering, delayed feedback, next-step recommendations) plus a playful Educational Song Generator for any topic.
+- Positioned as timesaving features for teachers rolling out AI across classrooms.
