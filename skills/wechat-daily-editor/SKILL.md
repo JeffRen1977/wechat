@@ -1,6 +1,6 @@
 ---
 name: wechat_daily_editor
-description: Daily wechat_factory pipeline — exactly 3 articles (EDU, MED health, FIN). YouTube trends default; structured layout (SCQA, Why-How-What), title variants, image-friendly H2s. See article_style.md + skills/wechat-title-variants + wechat-image-director.
+description: Daily wechat_factory —3 articles (EDU, MED, FIN). YouTube default; SCQA, hooks, footnote links via md_to_wechat_html, title variants, image director, editorial review. See article_style + wechat-* skills + IDENTITY.md.
 ---
 
 # Wechat Daily Editor
@@ -9,7 +9,7 @@ When the user says "run today's wechat pipeline" or "执行今日公众号任务
 
 1. Create `wechat_factory/04_output/YYYY-MM-DD/` if not exists.
 
-1b. **Before writing:** Read `wechat_factory/03_templates/article_style.md` end-to-end (主编视角、黄金圈、SCQA、段落/引用/分割线/emoji 列表、5 标题备选、Action Items、CTA、自检). Use `skills/wechat-title-variants/SKILL.md` for the five title styles in an HTML comment before H1. Use `skills/wechat-image-director/SKILL.md` so each H2 has concrete nouns for fig1/fig2.
+1b. **Before writing:** Read `wechat_factory/03_templates/article_style.md` end-to-end (含 **WeChat 风格硬约束**、Emotional_Goal、外链脚注约定). Use `skills/wechat-title-variants/SKILL.md` (五型标题注释)、`skills/wechat-image-director/SKILL.md` (情绪→画面 brief)、`skills/wechat-article-formatter/SKILL.md` (HTML/绿色主题/脚注逻辑)、`skills/wechat-editorial-review/SKILL.md` (事实→人设→爆款 三轮). Skim `IDENTITY.md` for 情绪锚点.
 
 2. **Exactly three articles** — one file each (no `_2` unless user explicitly asks for more):
    - **Education:** `EDU_article.md`

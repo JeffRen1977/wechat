@@ -30,7 +30,7 @@ Create `wechat_factory/04_output/YYYY-MM-DD/` if it does not exist (use today’
 
 ## Step 3: Read templates
 
-Read `wechat_factory/03_templates/article_style.md` and `wechat_factory/03_templates/viral_titles.txt`. Use relevant `wechat_factory/02_knowledge_base/*.md` if the topic fits MED/FIN/EDU.
+Read `wechat_factory/03_templates/article_style.md`（含 WeChat 硬约束、评论区互动、外链脚注）and `viral_titles.txt`. Optionally `IDENTITY.md`, `skills/wechat-editorial-review/SKILL.md`, `skills/wechat-article-formatter/SKILL.md`. Use relevant `02_knowledge_base/*.md` if the topic fits MED/FIN/EDU.
 
 ---
 

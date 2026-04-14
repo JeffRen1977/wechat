@@ -54,3 +54,15 @@ grep 'Draft uploaded' /tmp/wechat-draft-upload.log | tail -30
 同一天、同一 `base`（如 `EDU_article`）若出现**两行**时间接近的记录，即曾上传两次。
 
 **注意**：`wechat-draft-upload.sh` 会对**该日期目录下所有** `*.md` 各建一条草稿（例如同时存在 `INBOX_article.md`、`INBOX2_article.md` 时会各上传一篇）——这是**多篇不同文件**，不是脚本 bug；若只想上传 EDU/MED/FIN，需把其它 `.md` 移出该日目录或改脚本过滤（未默认实现）。
+
+## 7. Markdown→HTML：`md_to_wechat_html.py` 环境变量
+
+上传草稿前，脚本会对每篇调用 `scripts/md_to_wechat_html.py`。可通过环境变量控制（可写入 `~/.wechat-env`，与 `WECHAT_APPID` 等同源加载时注意只 export 合法 shell变量）：
+
+| 变量 | 含义 | 默认 |
+|------|------|------|
+| `WECHAT_MD_HTML_THEME` | `minimal`（灰蓝标题）或 `green`（公号绿强调、引用条绿边） | `minimal` |
+| `WECHAT_MD_HTML_FOOTNOTES` | `1`：http(s) 链接改为文内 `[n]` + 文末「参考与链接」；`0`：保留 Pandoc 生成的正文内 `<a>` | `1` |
+| `WECHAT_MD_HTML_WRAP_SECTION` | `1`：正文外包一层带 padding 的 `<section>` | 关 |
+
+命令行覆盖主题：`python3 scripts/md_to_wechat_html.py file.md --theme green`。

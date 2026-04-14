@@ -1,34 +1,45 @@
 ---
 name: wechat_image_director
-description: Map article sections to concrete English image prompts; domain color/style for Gemini cover and fig1/fig2. Complements scripts/gemini-gen-images.py.
+description: Emotion-first image briefs — subject + composition + style + light; domain palettes; complements gemini-gen-images.py.
 ---
 
-# WeChat Image Director（视觉导演）
+# WeChat Image Director（视觉导演 / Image_Gen_Master）
 
-Automated images use `scripts/gemini-gen-images.py` (via `run-gemini-images.sh`). The script reads **H2 sections + first lines** to build prompts. You can improve results **before** generation by:
+自动化仍走 `scripts/gemini-gen-images.py`（`run-gemini-images.sh`）。**在调用脚本之前**，先在稿子里定调，可显著提升质感。
 
-## 1. 结构配合脚本
+## 1. 先定「情绪」，再写画面（不要只丢一句「配张图」）
 
-- Each **H2** should be followed by **2–4 sentences of concrete nouns**（人、场景、物体、数据关系）—脚本会把 H2 与小节正文拼进配图 prompt。
-- Place `![配图](wechat_factory/05_assets/images/YYYY-MM-DD_PREFIX_figN.png)` near the **H2 that best matches** the visual you want for fig1 / fig2.
+对当前文章用 **一句话**写清 **Emotional_Goal**（与 `article_style.md` 一致）：
 
-## 2. 分领域风格（与代码一致，供你写稿时心里有数）
+- **EDU：** 缓解焦虑 / 点亮方法感  
+- **MED：** 踏实、可信、不恐吓  
+- **FIN：** 冷静、清晰、有掌控感  
 
-| Prefix | 视觉关键词（英文场景更易出好图） |
-|--------|----------------------------------|
-| **EDU** | warm learning space, soft daylight, modern edtech, friendly — **not** cluttered text |
-| **MED** | clean clinical trust, soft teal/white, wellness — **no** gore, no body horror |
-| **FIN** | minimalist business, deep blue/white, abstract charts as shapes — **no** readable numbers/labels on screen |
-| **INBOX** | modern editorial, neutral slate + one accent — single clear subject |
+然后为 **封面** 与 **fig1 / fig2** 各写一句英文 brief，结构固定为：
 
-## 3. 若用手写英文 prompt（调试用）
+**`主体 (subject) + 构图 (composition) + 风格 (style) + 光影 (light)`**
 
-- **禁止**在画面里出现可辨认文字（脚本已加 no-text 规则）；用构图、光影、材质表达主题。
-- 用**一句具体场景**代替「一张关于教育的图」：例如 *A small group of students around a holographic lesson display, warm rim light, 8k illustration style.*
+示例（教育）：  
+*One focused student at a desk, soft side light through window, rule-of-thirds, 3D high-quality illustration, warm rim light, minimalist color.*
 
-## 4. 图文相关性
+## 2. 风格关键词池（可混用，每次选 2～4 个）
 
-- fig1：优先对应 **第一个实质性 H2**（痛点/情境）。
-- fig2：优先对应 **How/方案/总结向 H2**。
+- `3D high-quality illustration` / `minimalist flat design`
+- `editorial magazine cover`
+- `soft natural daylight` / `cinematic rim light`
+- `leica photography style`（偏纪实、克制）
+- `shot on iPhone 15 Pro`（生活感、真实焦段）
+- 领域色：EDU 暖色、MED 青白信任感、FIN 深蓝极简（与脚本默认一致）
 
-When the user says images feel generic: check H2 density, move placeholders, or suggest re-running `./scripts/run-gemini-images.sh <path/to/article.md>` after edits.
+画面 **禁止** 出现可读文字（脚本已加规则）。
+
+## 3. 结构配合脚本
+
+- 每个 **H2** 下先有 **带具象名词** 的 2～4 句，再插 `![配图](wechat_factory/05_assets/images/YYYY-MM-DD_PREFIX_figN.png)`。
+- fig1：痛点 / 情境向 H2；fig2：How / 方案 / 总结向 H2。
+
+## 4. 与代码的衔接
+
+- 脚本会读取 **标题 + H2 段落文字** 拼 prompt；你在 brief 里想的 **情绪与关键词** 应体现在 **H2 行文** 中，脚本才能对齐。
+
+When images feel generic: refine H2 concrete nouns, re-run `./scripts/run-gemini-images.sh <article.md>`, or set `GEMINI_IMAGE_MODEL` env if needed.

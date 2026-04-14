@@ -17,7 +17,7 @@
 - If no PDF MCP is available, use `bash` to run: `scripts/extract_pdf_text.sh <path-to-pdf>` and then summarize the output.
 
 ## Filesystem (read, write, edit / MCP filesystem)
-- **Read**: `wechat_factory/02_knowledge_base/*.md`, `wechat_factory/03_templates/*` (especially **`article_style.md`** for layout, SCQA, Action Items, CTA; **`viral_titles.txt`** for titles). Optional skills: `skills/wechat-title-variants/`, `skills/wechat-image-director/`.
+- **Read**: `wechat_factory/02_knowledge_base/*.md`, `wechat_factory/03_templates/*` (especially **`article_style.md`**, **`viral_titles.txt`**). Skills: `wechat-title-variants`, `wechat-image-director`, `wechat-article-formatter` (HTML theme + link footnotes), `wechat-editorial-review` (3-pass). **`IDENTITY.md`**: Emotional_Goal per vertical.
 - **Write**: Save articles to `wechat_factory/04_output/YYYY-MM-DD/MED_article.md` (and FIN_, EDU_, etc.).
 - **Create** daily folder: `wechat_factory/04_output/$(date +%Y-%m-%d)/`.
 - **Update knowledge base (dedup)**: After saving an article, append one line to the domain's `02_knowledge_base` file under the 「已解析论文」 section, format: `YYYY-MM-DD | 论文标题 | 来源` (e.g. medical_ai.md for MED, finance_ai.md for FIN, edu_ai.md for EDU).
