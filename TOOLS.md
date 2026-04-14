@@ -17,7 +17,7 @@
 - If no PDF MCP is available, use `bash` to run: `scripts/extract_pdf_text.sh <path-to-pdf>` and then summarize the output.
 
 ## Filesystem (read, write, edit / MCP filesystem)
-- **Read**: `wechat_factory/02_knowledge_base/*.md`, `wechat_factory/03_templates/*`.
+- **Read**: `wechat_factory/02_knowledge_base/*.md`, `wechat_factory/03_templates/*` (especially **`article_style.md`** for layout, SCQA, Action Items, CTA; **`viral_titles.txt`** for titles). Optional skills: `skills/wechat-title-variants/`, `skills/wechat-image-director/`.
 - **Write**: Save articles to `wechat_factory/04_output/YYYY-MM-DD/MED_article.md` (and FIN_, EDU_, etc.).
 - **Create** daily folder: `wechat_factory/04_output/$(date +%Y-%m-%d)/`.
 - **Update knowledge base (dedup)**: After saving an article, append one line to the domain's `02_knowledge_base` file under the 「已解析论文」 section, format: `YYYY-MM-DD | 论文标题 | 来源` (e.g. medical_ai.md for MED, finance_ai.md for FIN, edu_ai.md for EDU).
@@ -30,5 +30,5 @@
 
 ## Image Gen
 - Generate one cover image per article from title/abstract. Save to `wechat_factory/05_assets/images/` with name like `YYYY-MM-DD_MED_cover.png`.
-- **Gemini (Nano Banana)**：When asked to generate cover or figures, run via **bash**: `./scripts/run-gemini-images.sh wechat_factory/04_output/YYYY-MM-DD/<PREFIX>_article.md`. Produces **1 cover + 2 content images** per article. This wrapper sources `~/.gemini-env` then runs the image script. Ensure `~/.gemini-env` contains `export GEMINI_API_KEY=...` (Agent does not load `~/.bashrc`). See IMPLEMENTATION.md 4.5.
+- **Gemini (Nano Banana)**：When asked to generate cover or figures, run via **bash**: `./scripts/run-gemini-images.sh wechat_factory/04_output/YYYY-MM-DD/<PREFIX>_article.md`. Produces **1 cover + 2 content images** per article; prompts use **title + H2 section text** and **domain-locked palettes** (EDU/MED/FIN/INBOX) — see `scripts/gemini-gen-images.py`. Draft articles with **concrete nouns under each H2** for better fig relevance. This wrapper sources `~/.gemini-env` then runs the image script. Ensure `~/.gemini-env` contains `export GEMINI_API_KEY=...` (Agent does not load `~/.bashrc`). See IMPLEMENTATION.md 4.5.
 - **All articles → images → WeChat draft**：Run `./scripts/generate-images-and-upload.sh [YYYY-MM-DD]` to generate 1 cover + 2 figs for each .md in that day’s output, then upload all to the WeChat draft box.

@@ -36,7 +36,7 @@ Read `wechat_factory/03_templates/article_style.md` and `wechat_factory/03_templ
 
 ## Step 4: Write the draft article
 
-Write **one** article (1500–2000 chars, same style as the daily pipeline) — **生动有趣、浅显易懂**，面向普通读者。Save to:
+Write **one** article (**1500–2000 字**, same style as the daily pipeline) — **生动有趣、浅显易懂**，面向普通读者；遵循 `article_style.md`（黄金圈/SCQA、短段、引用块、3 条 Action Items、CTA、标题五选一注释）。Save to:
 
 `wechat_factory/04_output/YYYY-MM-DD/INBOX_article.md`
 

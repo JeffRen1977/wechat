@@ -69,24 +69,40 @@ def read_article(md_path: Path) -> tuple[str, list[str]]:
     section_prompts = []
     for blk in blocks[1:4]:  # skip first (before first ##), take up to 3 sections
         line = blk.split("\n")[0].strip()
-        rest = " ".join(blk.split("\n")[1:4]).strip()  # first few lines
-        s = f"{line}: {rest}" if rest else line
-        section_prompts.append(s[:220])
+        rest = " ".join(blk.split("\n")[1:8]).strip()  # first lines under H2 for visual cues
+        s = f"{line}. {rest}" if rest else line
+        section_prompts.append(s[:400])
     return title, section_prompts
 
 
-# English-only topic hints by prefix to avoid model rendering Chinese (which it often gets wrong)
-PREFIX_TOPICS = {
-    "MED": "medical AI, healthcare technology, clinical research",
-    "FIN": "financial AI, data and analytics, fintech",
-    "EDU": "education technology, learning and teaching",
+# English-only topic + visual direction by prefix (image model reads this; avoids wrong Chinese in pixels)
+PREFIX_VISUAL = {
+    "MED": (
+        "healthcare, wellness, and medical technology",
+        "3D or soft illustration, clean clinical trust, teal and white palette, soft lighting, "
+        "no gore or body horror, single clear focal subject, 8k illustration feel",
+    ),
+    "FIN": (
+        "finance, investing, and data-driven decisions",
+        "minimalist business style, deep blue and white, abstract charts as geometric shapes only "
+        "with no readable labels or numbers, premium editorial, single hero metaphor",
+    ),
+    "EDU": (
+        "education technology, classrooms, and lifelong learning",
+        "warm learning environment, soft natural daylight, friendly modern edtech, "
+        "orange and cream accents optional, uncluttered, hopeful mood",
+    ),
+    "INBOX": (
+        "technology, business, and current affairs",
+        "modern editorial, neutral slate with one accent color, high clarity, one strong subject",
+    ),
 }
 
 NO_TEXT_RULE = " Critical: do not include any text, words, letters, numbers, or characters in the image. The image must be purely visual: shapes, colors, figures, and composition only—no writing of any kind."
 
 
 def generate_image(client, prompt: str, out_path: Path, style_hint: str = "clean, professional") -> bool:
-    full_prompt = f"{prompt}. Style: {style_hint}, suitable for a tech article.{NO_TEXT_RULE}"
+    full_prompt = f"{prompt} Style: {style_hint}, suitable for a WeChat official account article cover or inline figure.{NO_TEXT_RULE}"
     try:
         response = client.models.generate_content(
             model=GEMINI_IMAGE_MODEL,
@@ -150,24 +166,39 @@ def main():
 
     client = None if args.dry_run else load_client()
 
-    # 1) Cover image (English-only prompt to avoid wrong Chinese rendering)
-    topic_en = PREFIX_TOPICS.get(prefix.upper(), "technology and research")
-    cover_prompt = f"Create a single professional cover image for an article about {topic_en}. Minimal, modern, editorial style."
+    pfx = prefix.upper()
+    topic_en, domain_style = PREFIX_VISUAL.get(pfx, PREFIX_VISUAL["INBOX"])
+
+    # 1) Cover: concrete scene from title + domain (title may be Chinese — model uses it as semantic cue only)
+    title_short = (title or topic_en)[:120]
+    cover_prompt = (
+        f"Create one striking cover image for a WeChat article. "
+        f"Conceptual theme from title: {title_short!r}. "
+        f"Subject domain: {topic_en}. "
+        f"Show one clear hero scene or metaphor (not a collage), cinematic composition, high detail."
+    )
     cover_path = ASSETS_IMAGES / f"{date}_{prefix}_cover.png"
     if args.dry_run:
         print(f"Cover prompt: {cover_prompt}\n-> {cover_path}")
     else:
-        generate_image(client, cover_prompt, cover_path, style_hint="editorial cover, minimal, high quality")
+        generate_image(client, cover_prompt, cover_path, style_hint=domain_style)
 
-    # 2) In-article figures (English-only; do not pass Chinese so model won't render wrong characters)
-    num_figs = min(args.num_figs, len(section_prompts) or 1)
+    # 2) In-article figures: tie to H2 section summaries when present (read_article fills these)
+    num_figs = min(args.num_figs, max(len(section_prompts), 1))
     for i in range(num_figs):
-        fig_prompt = f"Create an abstract or conceptual illustration for an article section about {topic_en}. Visual metaphor or mood only, no text."
+        section_idea = section_prompts[i] if i < len(section_prompts) else topic_en
+        section_idea = section_idea.strip()[:400]
+        fig_prompt = (
+            f"Editorial illustration for the middle of a long-form article. "
+            f"Section theme and visual direction (no text in image): {section_idea!r}. "
+            f"Overall domain: {topic_en}. "
+            f"One concrete scene with a single focal subject; avoid generic stock mush."
+        )
         fig_path = ASSETS_IMAGES / f"{date}_{prefix}_fig{i+1}.png"
         if args.dry_run:
             print(f"Fig{i+1} prompt: {fig_prompt}\n-> {fig_path}")
         else:
-            generate_image(client, fig_prompt, fig_path)
+            generate_image(client, fig_prompt, fig_path, style_hint=domain_style)
 
     return 0
 
