@@ -1,6 +1,6 @@
 ---
 name: wechat_daily_editor
-description: Daily wechat_factory —3 articles (EDU, MED, FIN). YouTube default; SCQA, hooks, footnote links via md_to_wechat_html, title variants, image director, editorial review. See article_style + wechat-* skills + IDENTITY.md.
+description: Daily wechat_factory —3 articles (EDU, MED, FIN). Default sources: latest popular YouTube + news buzz, NOT academic papers unless user asks. SCQA, hooks, footnotes, title variants, image director, editorial review.
 ---
 
 # Wechat Daily Editor
@@ -16,17 +16,19 @@ When the user says "run today's wechat pipeline" or "执行今日公众号任务
    - **Health / 健康:** `MED_article.md` (health, wellness, 医学科普 — not necessarily “medical AI paper”)
    - **Finance / 财经:** `FIN_article.md`
 
-3. **Source mode (default = YouTube + 最新趋势)**  
+3. **Source mode (default = 热门 YouTube + 大众新闻，不要默认论文)**  
    Unless the user explicitly asks for **papers only** / **学术论文** / **arXiv**:
-   - For **each** of the three domains above, find **one** recent, trending YouTube video (past **24–72 hours** when possible): education, health, finance respectively.
-   - Open URLs with browser tools; save snapshots to `wechat_factory/01_sources/web_snapshots/` as `YYYY-MM-DD_EDU_youtube_<slug>.txt`, `_MED_youtube_...`, `_FIN_youtube_...`.
+   - For **each** of the three domains, pick **one primary source: a recent, popular YouTube video** (past **24–72 hours** when possible; prefer high engagement / clearly “trending” in that niche: EDU, health/wellness, finance).
+   - **Secondary (recommended):** use search to find **1–2 mainstream news or tech-media articles** that discuss the same topic or same event—**for context and fact-checking**, not to replace the YouTube-first angle. This matches “what people are seeing in the news,” not journal papers.
+   - **Do not** default to arXiv, PubMed, or PDF papers as the main story; academic citations are **out of scope** unless in **Papers mode**.
+   - Open URLs with browser tools; save snapshots to `wechat_factory/01_sources/web_snapshots/` as `YYYY-MM-DD_EDU_youtube_<slug>.txt`, `_MED_youtube_...`, `_FIN_youtube_...` (and optional `YYYY-MM-DD_<domain>_news_<slug>.txt` for news pages).
    - Capture title, description, transcript/captions (or description + chapters if no transcript).
    - **Tone & structure:** 生动有趣、浅显易懂；每篇按 **Why→How→What** 或 **SCQA** 组织（见 `article_style.md` 按 EDU/MED/FIN 表）；**情绪化开头**（故事/热点/设问）；**每段不超过约 3 行手机屏**；金句用 `>`；**3 条 Action Items** + 统一 **点赞/在看/关注** CTA。
 
 4. **Papers mode** — only if user says **只要论文** / **papers only** / **学术来源**:  
    One recent paper per domain → same three filenames `EDU_article.md`, `MED_article.md`, `FIN_article.md`, same tone where possible.
 
-5. **Knowledge base:** After each article, append `日期 | 标题 | 来源` to the matching `02_knowledge_base/*.md` (YouTube URL or paper link).
+5. **Knowledge base:** After each article, append `日期 | 标题 | 来源` to the matching `02_knowledge_base/*.md` — **默认来源填主 YouTube 链接**（可附新闻 URL）；论文模式才填论文链接。
 
 6. **Images + upload (avoid duplicates):**  
    - **If this task was started by `run-daily-wechat.sh` (cron / daily script):** Do **not** run `./scripts/wechat-draft-upload.sh` or `./scripts/generate-images-and-upload.sh`. The shell script’s **Step 2** already runs `generate-images-and-upload.sh` after you return—calling upload from the agent **again** creates **a second copy of each draft** in the WeChat draft box.  

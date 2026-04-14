@@ -331,7 +331,7 @@
 
   When the user says "run today's wechat pipeline" or "执行今日公众号任务":
   1. Create `wechat_factory/04_output/YYYY-MM-DD/` if not exists.
-  2. Write exactly three files: `EDU_article.md`, `MED_article.md`, `FIN_article.md` (education, health, finance). Default sources: YouTube latest trends per domain; papers only if user asks.
+  2. Write exactly three files: `EDU_article.md`, `MED_article.md`, `FIN_article.md` (education, health, finance). Default sources: **latest popular YouTube** per domain + optional **mainstream news** for the same buzz—not academic papers; papers only if user explicitly asks.
   3. Then images + upload per skills/wechat-daily-editor/SKILL.md.
   4. Do not delete 02_knowledge_base or 03_templates.
   ```
