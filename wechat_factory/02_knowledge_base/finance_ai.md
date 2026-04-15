@@ -29,6 +29,7 @@
 - 2026-03-20 | I tried 100+ AI Tools. These are the Best for Finance | https://www.youtube.com/watch?v=KKmvJZ4irlY
 - 2026-03-21 | The Updated Excel PivotTable Guide for 2026 (+ AI Shortcut) | https://www.youtube.com/watch?v=K3KqOTdypyw
 - 2026-04-13 | FP&A Reports Using AI Webinar | https://www.youtube.com/watch?v=JgTGOEwY9Mw
+- 2026-04-14 | AI Investment Results 2026: 30-Day Experiment | https://www.youtube.com/watch?v=L5kOZ4bOU5c
 
 ## 行业趋势摘要
 

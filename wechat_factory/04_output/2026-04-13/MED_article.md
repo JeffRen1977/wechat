@@ -10,10 +10,14 @@ Compliance Podcast Network 最新一期《[AI in Healthcare: Five Stories You Ne
 
 > “Shadow AI 不是员工恶意，它是因为官方工具上线太慢。”——播客原话提醒我们，治理节奏比技术快慢更关键。
 
+![配图](wechat_factory/05_assets/images/2026-04-13_MED_fig1.png)
+
 ## 这些故事透露了什么趋势？
 - **从“炫技”到“运营指标”**：五条新闻全部落在非常具体的指标上——等待时间、触达率、库存周转、审计成功率、IT 预算；说明医疗 AI 的 KPI 正被重新写入董事会报告。
 - **监管与创新捆绑**：播客每讲完一个案例，都会强调 HIPAA、CMS、FTC 的对应要求；把“好点子”与“合规条款”成对记下，就是 2026 年的必修课。
 - **跨部门协作成为默认姿势**：无论是 Concierge 模式还是 Shadow AI 风险，主角都不再是单一科室，而是 IT + 合规 + 临床一起定规则。
+
+![配图](wechat_factory/05_assets/images/2026-04-13_MED_fig2.png)
 
 ## 立刻可做的 3 个动作
 1. **把影子 AI 列入风控指标**：不是一刀切，而是建立登记表 + 白名单，让一线团队愿意报备。

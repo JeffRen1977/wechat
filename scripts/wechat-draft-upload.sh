@@ -4,6 +4,8 @@
 # Usage: ./scripts/wechat-draft-upload.sh [YYYY-MM-DD]
 #   If no date, uses today. Reads from wechat_factory/04_output/YYYY-MM-DD and 05_assets/images/.
 set -e
+export LC_ALL="${LC_ALL:-C.UTF-8}"
+export LANG="${LANG:-C.UTF-8}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # Load WeChat credentials (e.g. for cron); optional if already in environment
@@ -55,13 +57,9 @@ md_to_wechat_html() {
   python3 "$SCRIPT_DIR/md_to_wechat_html.py" "$md" --max-chars 19000
 }
 
-# Build title from first # line or filename
+# Build title from first # line (UTF-8 /32 Unicode chars — never use head -c, it breaks CJK)
 get_title() {
-  local md="$1"
-  local base="$2"
-  local t
-  t=$(grep -m1 '^# ' "$md" 2>/dev/null | sed 's/^# //' | head -c 32)
-  if [[ -n "$t" ]]; then echo "$t"; else echo "$base"; fi
+  python3 "$SCRIPT_DIR/article_title_for_wechat.py" "$1" "$2"
 }
 
 # Find a cover for prefix; fallback: try first segment (MED_article_2 -> MED) or any DATE cover

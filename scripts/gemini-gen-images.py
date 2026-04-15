@@ -54,24 +54,45 @@ def load_client():
     return genai.Client(api_key=api_key)
 
 
+# Skip these H2s for fig prompts (not visual); still used as fallback if nothing else.
+_FIG_HEADING_SKIP = re.compile(
+    r"^(Three Action Items|Action Items|\d+\.\s*Action|互动|资源|参考|评论区|CTA|点赞|在看|"
+    r"附录|参考文献)$",
+    re.IGNORECASE,
+)
+
+
 def read_article(md_path: Path) -> tuple[str, list[str]]:
-    """Return (title, list of section_texts for figures)."""
+    """Return (title, list of section blobs for figures: heading + body up to next ##)."""
     text = md_path.read_text(encoding="utf-8")
-    # Title: first # line
     title = ""
     for line in text.splitlines():
         m = re.match(r"^#\s+(.+)$", line)
         if m:
             title = m.group(1).strip()
             break
-    # Split by ## and take first 2-3 sections (heading + first paragraph)
-    blocks = re.split(r"\n##\s+", text, maxsplit=0)
-    section_prompts = []
-    for blk in blocks[1:4]:  # skip first (before first ##), take up to 3 sections
-        line = blk.split("\n")[0].strip()
-        rest = " ".join(blk.split("\n")[1:8]).strip()  # first lines under H2 for visual cues
-        s = f"{line}. {rest}" if rest else line
-        section_prompts.append(s[:400])
+    # Each ## section: full body until next ## (better context for image model)
+    section_re = re.compile(r"(?:^|\n)##\s+([^\n]+)\n([\s\S]*?)(?=\n##\s+|\Z)")
+    section_prompts: list[str] = []
+    for m in section_re.finditer(text):
+        heading = m.group(1).strip()
+        body = m.group(2).strip()
+        if _FIG_HEADING_SKIP.match(heading):
+            continue
+        blob = f"Section title: {heading}\nKey content: {body}"
+        section_prompts.append(blob[:1200])
+    if len(section_prompts) < 2:
+        for m in section_re.finditer(text):
+            heading = m.group(1).strip()
+            body = m.group(2).strip()
+            blob = f"Section title: {heading}\nKey content: {body}"
+            short = blob[:1200]
+            if short not in section_prompts:
+                section_prompts.append(short)
+            if len(section_prompts) >= 4:
+                break
+    if not section_prompts:
+        section_prompts = [f"Article excerpt:\n{text[:900]}"]
     return title, section_prompts
 
 
@@ -169,13 +190,16 @@ def main():
     pfx = prefix.upper()
     topic_en, domain_style = PREFIX_VISUAL.get(pfx, PREFIX_VISUAL["INBOX"])
 
-    # 1) Cover: concrete scene from title + domain (title may be Chinese — model uses it as semantic cue only)
+    # 1) Cover: title + first substantive section so the scene matches the article, not only the domain
     title_short = (title or topic_en)[:120]
+    context_snip = section_prompts[0][:500] if section_prompts else ""
     cover_prompt = (
         f"Create one striking cover image for a WeChat article. "
-        f"Conceptual theme from title: {title_short!r}. "
+        f"Title theme: {title_short!r}. "
         f"Subject domain: {topic_en}. "
-        f"Show one clear hero scene or metaphor (not a collage), cinematic composition, high detail."
+        f"Base the visual on specific subjects named in this excerpt (products, settings, metaphors — "
+        f"even if the excerpt is Chinese, interpret visually; no text in image): {context_snip!r}. "
+        f"One clear hero scene, not a collage, cinematic composition, high detail."
     )
     cover_path = ASSETS_IMAGES / f"{date}_{prefix}_cover.png"
     if args.dry_run:
@@ -189,10 +213,12 @@ def main():
         section_idea = section_prompts[i] if i < len(section_prompts) else topic_en
         section_idea = section_idea.strip()[:400]
         fig_prompt = (
-            f"Editorial illustration for the middle of a long-form article. "
-            f"Section theme and visual direction (no text in image): {section_idea!r}. "
-            f"Overall domain: {topic_en}. "
-            f"One concrete scene with a single focal subject; avoid generic stock mush."
+            f"Editorial illustration for a specific section of a Chinese WeChat article. "
+            f"Read the excerpt and depict the MAIN concrete subject or metaphor (tools, people, charts as shapes, "
+            f"classroom, medical context, money/ledger abstraction — match the excerpt, not a generic stock photo). "
+            f"Excerpt: {section_idea!r}. "
+            f"Domain: {topic_en}. "
+            f"Single focal subject, strong composition, no readable text in the image."
         )
         fig_path = ASSETS_IMAGES / f"{date}_{prefix}_fig{i+1}.png"
         if args.dry_run:

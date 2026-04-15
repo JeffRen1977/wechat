@@ -1,0 +1,13 @@
+Title: I tried 100+ AI Tools. These are the Best for Finance
+Channel: Kenji Explains
+URL: https://www.youtube.com/watch?v=KKmvJZ4irlY
+Uploaded: Mar 15, 2026 (9.9K views, 5 days ago)
+Structure / chapters:
+0:00 AI Research Tools (Perplexity Projects, ScholarAI plug-ins)
+2:49 AI Data Import & Cleaning (FlickerTab, Clay for scraping, AutoHotkey macros)
+5:55 Data Analysis & Modeling (Excel GPT-4 connectors, Coefficient, FinChat)
+10:47 Pitch Deck & Presentation (Beautiful.ai, Gamma, Tome updates)
+Description highlights:
+- Host tested 100+ AI apps and picked the ones that genuinely speed up equity research, budgeting, model building, and slide prep.
+- Shares free resource “5 Essential Resources for Using ChatGPT at Work.”
+- Video focuses on corporate/FP&A workflows (fast transcript summarizing 10-Ks, automated CSV clean-up, building 3-statement models with Claude-in-Excel beta, and AI slide generators with financial data templates).

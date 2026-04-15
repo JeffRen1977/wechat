@@ -24,6 +24,9 @@ When the user says "run today's wechat pipeline" or "执行今日公众号任务
    - Open URLs with browser tools; save snapshots to `wechat_factory/01_sources/web_snapshots/` as `YYYY-MM-DD_EDU_youtube_<slug>.txt`, `_MED_youtube_...`, `_FIN_youtube_...` (and optional `YYYY-MM-DD_<domain>_news_<slug>.txt` for news pages).
    - Capture title, description, transcript/captions (or description + chapters if no transcript).
    - **Tone & structure:** 生动有趣、浅显易懂；每篇按 **Why→How→What** 或 **SCQA** 组织（见 `article_style.md` 按 EDU/MED/FIN 表）；**情绪化开头**（故事/热点/设问）；**每段不超过约 3 行手机屏**；金句用 `>`；**3 条 Action Items** + 统一 **点赞/在看/关注** CTA。
+   - **Lists:** Every `-` / `1.` line must have text **on the same line or immediately on the next line** (no blank line in between). Never emit empty list markers — they become blank bullets in WeChat.
+   - **正文配图（必须）**：每篇在 **两个** 合适的 `##` 小节末各插入一行 Markdown 图（与 `run-gemini-images.sh` 产出文件名一致），否则草稿里**只有封面、正文无图**：  
+     `![配图](wechat_factory/05_assets/images/YYYY-MM-DD_EDU_fig1.png)` 与 `..._fig2.png`（MED/FIN 则换前缀）。日期用当天，`YYYY-MM-DD` 与 `EDU`/`MED`/`FIN` 与文件名一致。若漏写，`generate-images-and-upload.sh` 会在上传前用脚本自动补插，但**主动写好位置**阅读体验更好。
 
 4. **Papers mode** — only if user says **只要论文** / **papers only** / **学术来源**:  
    One recent paper per domain → same three filenames `EDU_article.md`, `MED_article.md`, `FIN_article.md`, same tone where possible.

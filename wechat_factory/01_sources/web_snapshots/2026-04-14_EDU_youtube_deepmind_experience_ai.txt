@@ -1,0 +1,8 @@
+Title: Teaching the foundations of AI in the classroom
+Channel: Google DeepMind
+URL: https://www.youtube.com/watch?v=udnhu43tTfk
+Uploaded: 2026-04-09 | Duration: 1m21s
+Description highlights:
+- Introduces Experience AI, a free program by Google DeepMind + Raspberry Pi Foundation helping teachers run AI/ML lessons without prior CS background.
+- Emphasizes responsible, ethical AI usage, ready-made lesson plans, worksheets, and teacher training.
+- Notes reach: deployed in 165+ countries, focused on giving students vocabulary and critical thinking to discuss AI’s societal impact.

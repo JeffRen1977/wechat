@@ -1,0 +1,18 @@
+Source URL: https://techcrunch.com/2026/03/15/wiz-investor-unpacks-googles-32b-acquisition/
+Timestamp: 2026-03-15
+
+Content:
+
+Google closed its $32 billion acquisition of cybersecurity company Wiz this week — the biggest acquisition in Google’s history, as well as the largest ever acquisition of a venture-backed startup.
+
+On the latest episode of TechCrunch’s Equity podcast, Rebecca Bellan, Sean O’Kane, and Anthony Ha were joined by Shardul Shah, a partner at Wiz’s largest shareholder Index Ventures. Shah discussed his history with Wiz, which extends before Wiz itself — he previously backed Adallom, the startup previously founded by Wiz’s Assaf Rappaport, Ami Luttwak, and Roy Reznik.
+
+They discussed why the company was such an appealing acquisition target and how Shah responded when Wiz walked away from Google’s previous acquisition offer.
+
+“It’s no surprise that it’s Wiz,” Shah said. “Wiz is at the center of three tailwinds: AI, cloud, and security spend.”
+
+Shah emphasized that Wiz’s leadership team — CEO Assaf Rappaport, co-founders Ami Luttwak, Yinon Costica, and Roy Reznik — created a culture of trust and fast execution. Their platform secured cloud infrastructure and code in production, helping customers prioritize critical threats.
+
+He also noted the wider implications of Google’s acquisition: access to Google’s cloud, AI talent, and resources while maintaining Wiz’s independent culture.
+
+Finally, Shah said the deal inspires entrepreneurs globally and could spark new startups as Wiz employees and investors reinvest their gains. He reflected on the decade-long relationship with the founding team, including the moment when Wiz previously rejected a Google acquisition offer, emphasizing belief in the founders’ judgment.

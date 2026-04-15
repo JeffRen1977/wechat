@@ -1,0 +1,10 @@
+Title: Healthcare AI in 2026: From Novelty to Normalcy — A Fireside Chat
+Channel: UCSF Department of Medicine
+URL: https://www.youtube.com/watch?v=zmPW0PqZIlY
+Uploaded: Feb 13, 2026 (1.6K views as of capture)
+Key speakers: Bob Wachter, MD; introduction by Michelle Mourad, MD
+Description highlights:
+- Medical Grand Rounds session about how AI is moving from shiny pilot to routine clinical tool.
+- Conversation covers the limits of keeping “humans in the loop,” business/clinical incentives that determine whether AI improves or complicates care, and what everyday clinicians actually need from AI products.
+- Program flow: 2:30–56:00 talk by Bob Wachter; 56:00–1:03:14 Q&A.
+Notes: Wachter references his upcoming book “A Giant Leap: How AI Is Transforming Healthcare—and What That Means for Our Future,” and urges systems to define governance before bots start auto-ordering labs.

@@ -1,0 +1,19 @@
+Gecko Robotics lands the largest US Navy robotics deal yet
+
+The U.S. Navy has inked its largest robotics deal yet as the military branch looks to use robots to keep up with its fleet maintenance.
+
+Gecko Robotics, a Pittsburgh-based company that makes robots and sensors for inspecting large industrial assets, has signed a five-year IDIQ (indefinite delivery, indefinite quantity) deal with the U.S. Navy and U.S. General Services Administration (GSA), the company announced on Tuesday. The deal starts with an initial $54 million award and has a $71 million ceiling.
+
+The Navy will use Gecko’s robots and sensors to monitor the status and health of the U.S. Navy’s assets and fleets of ships, starting with 18 ships in the U.S. Pacific Fleet.
+
+Gecko founder and CEO Jake Loosararian told TechCrunch that the company’s robots will crawl into every nook and cranny of the ships to create a detailed digital replica — sometimes called a “digital twin” — of each vessel. The company’s software will help the organization monitor the assets and recommend maintenance, trying to get ahead of problems before they arise and reduce maintenance times and cost.
+
+“Once you create that digital representation using the robotic systems of the health and the condition of these assets, and even the digitization of the environment itself, then you can accelerate how quickly you can make decisions and repair,” Loosararian said. “You want to be able to build this living, breathing model that ensures that you’re reducing days into the future that these assets have to spend [out of service].”
+
+This deal is meant to help the Navy reach its goal of having 80% ship readiness by 2027. Today, about 40% of the Navy’s fleet is unavailable at any given time due to the long maintenance cycles on these vessels.
+
+“It’s like $13 billion to $20 billion a year in maintenance,” Loosararian said. “At a time when you need every asset you can get, that’s pretty critical. And these assets aren’t getting any younger either.”
+
+Gecko has been working with the U.S. Navy for four years. After a port engineer stationed in Japan reached out to learn more about the company, Gecko conducted an evaluation and a drew up a preventative maintenance plan. The Navy was impressed, and the relationship grew from there, leading up to Tuesday’s deal.
+
+“We’re helping to ensure that our critical assets live as long as they can and never are down,” Loosararian said. “I want to live in a world where we don’t have ships going through maintenance cycles, because we just know what’s broken and what to fix while they’re actually deployed. That’s my vision of the future, whether it’s a military asset or it’s a power plant.”

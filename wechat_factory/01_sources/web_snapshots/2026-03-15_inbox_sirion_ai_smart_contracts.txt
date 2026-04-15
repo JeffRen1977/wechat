@@ -1,0 +1,11 @@
+Source URL: https://www.sirion.ai/library/contract-ai/ai-smart-contracts/
+Timestamp: 2026-03-15
+
+Content Summary:
+- 文章概述AI驱动智能合约（结合区块链与AI）的概念，强调其可自执行并具备上下文理解能力。
+- 强调AI驱动的合同生命周期管理（CLM）与区块链智能合约的互补关系，前者负责起草、谈判、执行与绩效管理，后者负责自动化触发执行。
+- 指出集成后的四大价值：自动执行、数据驱动、兼顾法律判断、持续合规。
+- 例举供应链、保险、房地产、金融等行业的应用场景。
+- 总结效率、灵活性、透明度、成本降低等优势，强调该模式正在重塑合同管理。
+
+Full text captured via web_fetch on 2026-03-16.

@@ -1,0 +1,114 @@
+Source: https://youtu.be/WSPChlfxJyA
+Title: Full Claude Tutorial: Beginner to Advanced in 19 Minutes
+
+Description:
+*Get the free Complete Guide to Claude:* https://clickhubspot.com/dfn
+
+Summary:
+A complete guide to every feature in Claude AI: from prompting fundamentals to the tools most people never touch. Covers the ICC prompting framework, web search, file uploads, inline visualizations, artifacts, and the deep research feature, then moves into the system-building layer: Projects with custom instructions and knowledge bases, Skills for repeatable workflows, and Connectors for linking Claude to tools like Google Drive, Slack, Asana, and Notion. Also addresses the common custom instructions mistake that most tutorials recommend, and shows how Projects and Skills work together as the most powerful combination in the app.
+
+Chapters
+0:00 Intro
+0:21 Pricing
+0:48 Interface Overview
+1:09 Avoid this mistake
+1:58 What can you do?
+2:32 Better Prompts
+4:06 Pro Tip: Context Interview
+5:28 Web search
+6:51 File Uploads
+8:28 Inline visualizations and document creation
+9:28 Artifacts
+10:36 Deep Research
+11:39 Projects
+13:21 Skills
+16:39 Connectors
+17:28 Model Selection
+18:25 Desktop App
+
+Auto-generated transcript:
+Claude has been my most used tool for
+the past year. Now, everyone else is
+getting on board. It has projects that
+remember everything about your work,
+skills that execute your repeatable
+processes automatically, connectors that
+pull in your actual tools and data, and
+much more. I'll cover every feature, and
+more importantly, how to connect it all
+into workflows that unlock its full
+power. This is the pricing. They do have
+one of the strongest free plans of all
+the LLMs. You can get a lot from it.
+But, if you use AI regularly, I
+recommend investing in the paid plan of
+whichever LLM you prefer most. It makes
+a big difference. For me, that's Claude,
+although I of course have a paid plan
+for all of them. For most people, this
+$20 per month plan will be plenty. In
+general, you'll only need to move up
+when you start using Claude Co-worker
+extensively or Claude Code. And those
+are separate tools beyond what I'm
+covering in this video. Okay, let's get
+into the actual product. Once you've set
+up an account, you'll be here. A similar
+chat interface to all the AI models. We
+have our prompt box in the middle, the
+model selector on the right, file
+uploads on the left. Then, the left
+panel opens up and has all your past
+conversations, plus some amazing
+features which I'll cover later, like
+skills, projects, and artifacts. One
+other thing I want to mention is under
+settings. There's some very common
+advice people give that actually makes
+your responses worse. So, there are
+these fields where you can tell Claude
+about yourself, select your work
+function, and personal preferences
+Claude should consider in responses. You
+tell Claude about yourself and give it a
+list of how you'd like it to respond.
+That sounds great, which is why everyone
+recommends it. But, if you actually use
+Claude across different topics, it's bad
+advice. I use Claude for a wide range of
+things, and no custom instruction is
+going to apply to everything. It can
+lead to some weird responses. I leave
+these completely blank and set them up
+in projects instead. These are folders
+you can give their own instructions and
+custom knowledge bases. They're scoped
+to each context, so the right
+instructions apply at the right time.
+It's a much better system, and I'll
+cover all the details later. But, since
+this advice is so common, I wanted to
+cover it right off the bat. Now, back to
+the prompt box. You can use this for all
+the things we're used to with AI by now.
+Research, coding, problem-solving,
+learning new things, or writing, which
+is what I first started using Claude
+for. It has the most natural-sounding
+writing by far, and ability to match
+your style. It's been the leader there
+for a long time, same with coding. But,
+over the past few months, it's caught up
+and surpassed the other models in just
+about everything. Most people expect to
+unlock all of that by just typing a
+question into this box. With a basic
+prompt, you'll get generic results. And
+people do that, and then end up thinking
+that AI just gives that type of answer.
+But, it's all in how you use it. So, I
+have a three-part formula that changes
+the quality of every output. But, after
+that foundation, we can get into the
+really powerful stuff.
+... (see temp/WSPChlfxJyA.en.ttml for full transcript)

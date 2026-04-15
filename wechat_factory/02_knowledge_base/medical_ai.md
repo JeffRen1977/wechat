@@ -31,6 +31,7 @@
 - 2026-03-20 | Healthcare AI in 2026: From Novelty to Normalcy — A Fireside Chat | https://www.youtube.com/watch?v=zmPW0PqZIlY
 - 2026-03-21 | CTeL's March 2026 AI & LLM Working Group | https://www.youtube.com/watch?v=pELFKVkn-cI
 - 2026-04-13 | AI in Healthcare: Five AI Stories You Need to Know (Apr 10 briefing) | https://www.youtube.com/watch?v=CdL1V5uaq18
+- 2026-04-14 | From Hype to Reality: Where Clinical AI Actually Stands | https://www.youtube.com/watch?v=_XDcNV-YF84
 
 ## 政策与趋势摘要
 

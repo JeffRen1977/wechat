@@ -1,0 +1,9 @@
+Title: CTeL's March 2026 AI & LLM Working Group
+Channel: CTeL (Center for Telehealth & e-Health Law)
+URL: https://www.youtube.com/watch?v=pELFKVkn-cI
+Uploaded: 2026-03-19 | Duration: 24m33s
+Description summary:
+- Recap of the March AI & LLM Working Group call, covering the latest **federal AI policy** headlines.
+- Highlights include CMS’s fresh requests for information on using AI for program integrity, hospital billing/coding support, and Medicare modernization.
+- Update on NIST leadership (Arvind Raman nomination) and what it means for AI guardrails.
+- Featured presentation by Beth Jacobson: legal/ethical risks when mental-health seekers turn to chatbots, plus a “warm handoff” model that routes high-risk users to licensed, in-network clinicians in real time.

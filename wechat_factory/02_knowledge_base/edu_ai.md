@@ -26,6 +26,7 @@
 - 2026-03-21 | AI+Education Summit 2026: Inflection Point – A New Purpose for Learning | https://www.youtube.com/watch?v=LC7GUJLpH_Q
 - 2026-04-13 | AI in Higher Education: Hype or Hope? (ST Education Forum 2026) | https://www.youtube.com/watch?v=Zy7ucMmtDmg
 - 2026-04-13 | April 2026 MagicDrop | What's New at MagicSchool | https://www.youtube.com/watch?v=4QR-MUqTwVw
+- 2026-04-14 | Teaching the foundations of AI in the classroom | https://www.youtube.com/watch?v=udnhu43tTfk
 
 ## 政策与技术摘要
 

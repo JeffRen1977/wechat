@@ -1,0 +1,9 @@
+Title: The Updated Excel PivotTable Guide for 2026 (+ AI Shortcut)
+Channel: MyOnlineTrainingHub
+URL: https://www.youtube.com/watch?v=K3KqOTdypyw
+Uploaded: 2026-03-17 | Duration: 16m46s
+Description summary:
+- Free workbook + dashboard course links, plus newsletter and timestamps.
+- Video walks through building a PivotTable from scratch, layout tweaks, slicers, and common mistakes.
+- Adds a section on “AI alternatives” for people who need a head start drafting analysis but still want to control the formulas.
+- Chapters cover: getting started, auto-calcs, layout settings, the AI helper segment, dashboard next steps, little-known options (repeat items, tabular), slicer tricks, refreshing data, and avoidance of broken PivotTables.

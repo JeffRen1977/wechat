@@ -22,6 +22,8 @@ for md in "$OUT_DIR"/*.md; do
   [[ -f "$md" ]] || continue
   echo "[$(date -Iseconds)] Images for $(basename "$md")" >> "$LOG"
   ./scripts/run-gemini-images.sh "$md" >> "$LOG" 2>&1 || true
+  # Body images only appear in WeChat if Markdown contains ![...](..._figN.png); agents often omit them.
+  python3 "$SCRIPT_DIR/ensure_article_image_refs.py" "$md" >> "$LOG" 2>&1 || true
 done
 
 echo "[$(date -Iseconds)] Uploading to WeChat draft." >> "$LOG"

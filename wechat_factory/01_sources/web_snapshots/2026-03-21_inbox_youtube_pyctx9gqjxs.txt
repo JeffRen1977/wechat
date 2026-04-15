@@ -1,0 +1,14 @@
+Source: YouTube (https://youtu.be/PyctX9GQjXs)
+Video ID: PyctX9GQjXs
+Channel: 白白说大模型 (@白白说大模型)
+Upload date: 2026-03-11
+Title: AI Agent三大核心技术：Function Calling、MCP、A2A
+Description:
+Agent全套教程资料可以在我【公众號：白白說大模型】回复關鍵詞：【2】領取
+或者在我的主頁簡介上自取
+#ai #chatgpt #artificialintelligence #agent #learning #deepseek
+
+Notes:
+- yt-dlp extraction on 2026-03-21 (no transcript available; YouTube indicates subtitles disabled for this video).
+- Video duration 16m18s, focus on explaining AI Agent 核心技术 Function Calling, MCP (Model Context Protocol), Agent-to-Agent (A2A) collaboration.
+- To supplement details, refer to public documentation on OpenAI Function Calling, Model Context Protocol (MCP), and A2A agent hand-off best practices.

@@ -1,0 +1,10 @@
+Title: AI+Education Summit 2026
+Channel: Stanford HAI (Stanford Institute for Human-Centered Artificial Intelligence)
+URL: https://www.youtube.com/watch?v=EqouaCgSo-k
+Streamed live: Feb 11, 2026 (31,881 views)
+Description highlights:
+- Fourth annual AI + Education Summit themed “The AI Inflection Point: What, How, and Why We Learn Now.”
+- Brings together researchers, educators, tech leaders, policymakers, and philanthropy to discuss how to keep creativity, critical thinking, fairness, trust, and opportunity alive as AI moves faster than school systems.
+- Goal: move from “universal access” to “universal learning,” align AI with learning sciences, and turn AI into a force that expands—not narrows—student agency.
+- Session playlist includes breakouts such as “Blueprints for a Global Human-Centered Learning System” and “Inflection Point – A New Purpose for Learning.”
+Notes: Description emphasizes grounding AI deployments in pedagogy, setting new guardrails for assessment, and designing tools that co-create with teachers instead of replacing them.

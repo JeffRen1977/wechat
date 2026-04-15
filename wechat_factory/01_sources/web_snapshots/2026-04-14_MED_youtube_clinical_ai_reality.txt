@@ -1,0 +1,8 @@
+Title: From Hype to Reality: Where Clinical AI Actually Stands
+Channel: AI and Healthcare
+URL: https://www.youtube.com/watch?v=_XDcNV-YF84
+Uploaded: 2026-04-14 | Duration: 60m17s
+Description highlights:
+- Hosts Dr. Sanjay Juneja and Dr. Douglas Flora interview Dr. Peter Brodeur on what actually works in clinical AI deployments.
+- Chapters cover safety “jagged frontiers,” automation bias, benchmark saturation, workflow failure modes, accountability, vendor outcomes, and 2025 wins.
+- Purpose: move beyond marketing promises and map the gap between benchmark performance and bedside outcomes.

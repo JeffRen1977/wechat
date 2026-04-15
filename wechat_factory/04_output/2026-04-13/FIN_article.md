@@ -6,10 +6,14 @@ FP&A Professionals Institute 发布了 4 月 5 日的《[FP&A Reports Using AI](
 2. **一键生成决策版包**：同一数据集被拉成董事会摘要、业务复盘与现金滚动三套视图，只需替换 prompt，即可产出不同语气。
 3. **交互式可视化 + 预算合并**：AI 负责把多实体预算合在一张图里，FP&A 经理只需拖动切片器，就能回答“如果东南亚延后开店会怎样”。
 
+![配图](wechat_factory/05_assets/images/2026-04-13_FIN_fig1.png)
+
 ## 为什么 CFO 办公室该关心？
 - **速度提升到“小时级”**：以前要半天才能出一版差异说明，现在 AI 直接生成草稿，分析师只需确认假设。
 - **叙事与数据同源**：AI 输出引用同一张数据透视表，避免“PPT 说 3%，表格写 5%”的尴尬。
 - **培训新人更快**：主持人示范了“提示词模板”，新同事照抄即可做出像样的管理说明，而不用先熬出三个月“体感”。
+
+![配图](wechat_factory/05_assets/images/2026-04-13_FIN_fig2.png)
 
 ## Three Action Items
 1. **准备“Prompt Library”**：把 variance、cash runway、board Q&A 的标准提示词写成内部文档，方便复制粘贴。
