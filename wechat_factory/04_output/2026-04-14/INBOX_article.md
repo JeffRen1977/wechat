@@ -1,55 +1,58 @@
-<!-- 备选标题：1. 一周三件事把 AI 编程工具堆成三层 2. Cursor + Claude Code + Codex：失控却好用的 AI 编程新堆栈 3. 没有人规划的 AI Coding Stack 正在成形 4. 开发者别等单一神器：三层 AI 编码栈已经来了 5. 为什么 OpenAI 反而主动进驻对手的 IDE？ 选用：第4个 -->
-# 开发者别等单一神器：三层 AI 编码栈已经来了
+<!-- 备选标题：1. 把 Claude Code 用在非技术岗位的 3 秘诀 2. 别只让 Claude Code 写代码：它还能做销售、PPT、搜资料 3. 非技术团队也能用 Claude Code？三步套公式 4. Claude Code + 非技术任务：演示、知识库、销售三合一 5. 用 Claude Code 做 PPT 找客户，真的靠谱吗？ 选用：第2个 -->
+# 别只让 Claude Code 写代码：它还能做销售、PPT、搜资料
 
-「再等等，等哪个 IDE 赢了再迁移。」这是最近群里最常见的犹豫。但 The New Stack 的最新专稿提醒我们：2026 年 4 月的三次发布——Cursor 3、Codex 插件、Claude Code 插件生态——已经把 AI 编码从「选一个工具」推成「堆一个栈」。与其等一个赢家，不如现在就学会怎么把它们拼在一起。
+身边很多团队已经把 Claude Code 当成写 Bug 的「万能键」，可 Towards Data Science 最新的一篇实践稿提醒我们：这个工具真正的红利可能在非技术侧。作者 Eivind Kjosbakken 把日常的演示制作、知识检索、销售拓客全部交给 Claude Code，效率直接翻倍。与其守着 IDE 等工位，不如把这套流程搬到业务场景里。
 
-## 一周三件事，让“堆栈”取代“赢家”叙事
+## 为什么非技术任务更需要 AI 代理
 
-开局是 Cursor 3（代号 Glass）。它干脆拆掉 Composer 面板，换成专门的 Agents Window，把 VS Code 风味的编辑器降级成附属功能；`/best-of-n` 一次把同一需求派给多个模型，晚上还可以把会话托管在云端继续跑。三天前，OpenAI 又把 Apache 2.0 许可的 `codex-plugin-cc` 开源，让 Codex 直接作为 Claude Code 的子代理执行 `/codex:review`、`/codex:adversarial-review` 等命令；可以设成「审不过就阻止提交」的 Review Gate。两者相遇的第一批用户根本没把它们当对手，而是叠成一个链路。
+营销、客服、产品经理看似「不用写代码」，但 90% 的时间都在电脑前重复搬运信息——排 PPT、找旧资料、回 CRM。Claude Code 的价值不是让人人学编程，而是让它在本地/云端帮你批量写文档、调用 API、整理目录。
 
-> **真正的新闻不在于谁先发，而在于它们都默认彼此可嵌入。**
+> **作者的第一反应已经变成：「接到任务先问——Claude Code 能帮我做吗？」**
+
+具体来说：
+- 做演示不用重搭模板，直接让 Claude 用 LaTeX 生成 PDF 幻灯，统一品牌色；
+- 找资料不用来回切换 Notion、邮件、Drive，只要开放 API key 就能一次搜遍；
+- 销售拓客也能让它自动找 ICP、写脚本、更新 CRM。
 
 ![配图](wechat_factory/05_assets/images/2026-04-14_INBOX_fig1.png)
 
-## 这三层已经露出雏形
+## Claude Code 的三个非技术场景
 
-### 第一层：Orchestration（编排）
-Cursor 3 的 Agents Window 更像「代理调度控制台」。Sidebar 同时列出来自桌面、Slack、GitHub、Linear 的任务，Agent Tabs 让多路对话并排审阅，Design Mode 直接在内嵌浏览器上标注 UI 问题。Google Antigravity 也在复制同样的结构：Editor View 负责亲自写，Manager Surface 专管「放狗」。编辑器退居二线已是共识。
+### 1. 演示/提案
 
-### 第二层：Execution（执行）
-Claude Code + Codex 是最受欢迎的组合。Pragmatic Engineer 2 月调研显示，46% 的工程师把 Claude Code 列为「最爱」，SemiAnalysis 估算它已经贡献了 GitHub 公共提交的 4%，年底可能冲到 20%。Codex 也在 4 月破 300 万周活，云沙箱特性适合长时间无人值守。一个擅长长上下文推理，一个擅长并行吞吐，**差异性正是团队选择「双引擎」的理由**。
+作者把所有演示素材放在同一个文件夹，让 Claude 读取旧 deck，继承常用的色板、图表、段落结构。命令很简单：「用 LaTeX 生成一份 X 主题的演示，保留公司模板，并安装所需包。」生成的 PDF 每页就是一张幻灯，大纲、图示、图例都能复用，后续只需微调。
 
-### 第三层：Review（校验）
-Codex 插件真正撬动的是「审稿层」。当 Claude 生成代码，Codex 负责 adversarial review，替你穷举认证、回滚、race condition 等最容易忽视的坑。The New Stack 用一句话总结痛点：「让写稿的人自己改稿，只会放大盲点。」跨模型复核，则是把 AI 的「自信幻觉」降到最低的现实手段。
+### 2. 知识库秒搜
 
-## 为什么互通比锁死更赚钱
+把邮箱、Notion、Google Drive、Slack 的 API key 配好后，Claude Code 就能像内部 Google 一样调取资料。它可以批量搜索关键词、串联上下文、甚至把相关文件复制到临时文件夹，这比人工先猜在哪个应用里高效太多。作者说光这一招每周至少省掉数小时。
 
-按常理，OpenAI 应该自己做 IDE，劝你迁走。它却选择进驻 Claude Code 的 MCP 插件生态，让 Codex 的用量完全寄生在开发者现有的 ChatGPT 订阅或 API key 上——获客成本为零，使用一触即发。Anthropic 也乐见其成：开放插件标准换来了更厚的生态。**互通不是公益，是对「开发者一定会多栈并行」的正视。**
+### 3. 销售拓客
+
+Claude Code 可以：
+- 根据 ICP 条件去网页上找潜在客户；
+- 为每个客户生成定制化文案（职位、痛点、地区一个不落）；
+- 把名单、沟通记录同步回 CRM，自动清理旧数据。
+
+作者还维护了一个「Sales with Claude」文件夹，里面放公司简介、客群画像、话术示例。这样 Claude 每次开工都有上下文，不需要重新培训。
 
 ![配图](wechat_factory/05_assets/images/2026-04-14_INBOX_fig2.png)
 
-## 对开发团队的三点提醒
+## 如何把经验落到团队里
 
-- **模型选择就是基础设施选择。** Cursor 的 `/best-of-n` 把模型切换当成数据库选型流程：先根据任务特点挑模型，再看成本，而不是凭情绪定生死。
-- **编辑器地位会继续下滑。** 当日常界面变成代理监控面板，代码编辑只是「最后检查」的一环。别再把所有自动化都塞进 IDE 插件，开始考虑「独立编排层 + 轻量编辑器」的组合。
-- **Review 将走向对抗式。** 把跨供应商复核写进 CI/CD 流程，只让通过 adversarial review 的 PR 才能 merge，否则 AI 帮你写的代码永远只有自我感觉良好。
-
-## 现在就能落地的动作
-
-1. 画出你团队的「最常见 3 类需求」，为每一类配上「哪个代理负责 orchestration、哪个负责 execution」。
-2. 在 Claude Code 里装好 Codex 插件，把 `review gate` 打开至少一周，统计被拦下的真实问题类型。
-3. 试一次 Cursor 的 `/best-of-n`：同一任务交给 Claude、Codex 以及自建开源模型，观察响应时长、修订次数与成本，写成团队指南。
+1. **任务拆解表**：列出团队里最费时的 5 个非技术任务，标注输入文件夹、输出格式、评估标准，再交给 Claude 去跑第一版。
+2. **资料接入清单**：整理所有常用 SaaS 的 API key / 导出权限，用 `.env` 或保险箱规范管理，确保 Claude 有合法访问而且可撤销。
+3. **成果库**：演示、邮件、销售脚本都存进固定目录，并写一份 `README` 教 Claude 如何继承旧作品，避免每次从零开始。
 
 ---
 
 ### Action Items
 
-1. **绘制栈图**：用白板明确团队在 Orchestration／Execution／Review 各层的现有工具与空缺，确定增补顺序。
-2. **搭建跨模型审查**：在 Claude Code 启用 Codex Review Gate，或用自家 CI 写一个「不同模型必须互审」的自动化钩子。
-3. **评估成本与体验**：记录 `/best-of-n` 或多模型并行的 token 消耗、等待时间，算出「不同任务对应的最优组合」，写进开发手册。
+1. **挑一项非技术任务做试点**：比如本周的市场周会演示，全程交给 Claude Code + LaTeX 生成，再人工校对。
+2. **接入统一检索**：为邮箱、Notion、Drive、Slack 配好只读 API key，写一个提示词模板让 Claude 一次搜全。
+3. **打造业务资料夹**：建立「Claude_Sales」或「Claude_Operations」文件夹，内含 ICP、品牌语气、常用 KPI，供后续任务复用。
 
-如果这篇对你有用，欢迎点赞、在看；想持续跟进 AI 开发工具的演化，点个关注不迷路。你最想在哪一层（编排／执行／审查）引入第二个工具？评论区聊聊。
+如果这篇对你有帮助，欢迎点赞、在看；想持续追踪「AI 工具如何落地业务」，点个关注不走失。你最想先让 Claude Code 接管哪项琐碎任务？评论区一起出题。
 
 **参考与链接**
 
-- [Cursor, Claude Code, and Codex are merging into one AI coding stack nobody planned（The New Stack）](https://thenewstack.io/ai-coding-tool-stack/)
+- [How to Apply Claude Code to Non-technical Tasks（Towards Data Science）](https://towardsdatascience.com/how-to-apply-claude-code-to-non-technical-tasks/)
