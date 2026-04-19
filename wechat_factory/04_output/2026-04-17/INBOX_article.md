@@ -1,66 +1,50 @@
-<!-- 备选标题：1.Meta的Hyperagent为什么被企业盯上 2.自我改进AI不只写代码了 3.Hyperagent如何在非编码任务自我进化 4.别让AI自嗨：Hyperagent带来的机会和警告 5.把「自我改造」下放给AI会怎样｜选用：第3个 -->
-# Hyperagent如何在非编码任务里自我进化
+<!-- 备选标题：1.为什么谷歌要让任何 Agent 3 倍速写 Android App？ 2.用 Android CLI+Skills，搭建 AI 代工流水线最快 3X 3.传统 Android Studio vs 新 Agent 工具箱：效率差在哪 4.别让你的 Agent 乱改 SDK：Android 官方技能库来了 5.一篇看懂 Android CLI、Skills、Knowledge Base 怎么串｜选用：第2个 -->
+# 用 Android CLI+Skills，搭建 AI 代工流水线最快 3X
 
-当我们还在忙着给大模型写「改进提示词」时，Meta 团队突然递上一个更狠的概念：**让 AI 自己重写负责自我改进的那段逻辑**。这篇 VentureBeat 报道讲的 Hyperagent，就是把「任务执行者」和「监督它的元代理」熔在一起，让 AI 自己定义工作方法、记账、复盘，甚至修订迭代套路。
+还在为「让 AI 写 Android App 结果越帮越忙」而抓狂吗？谷歌刚把 agent 专用的 CLI、技能库和知识库打包上线，官方实测可以让 LLM 代工流程节省 70% token、提速 3 倍，这可是难得的「把内部自用工具全放出来」。
 
-## 为什么这条新闻值今天转给老板
+## 为什么谷歌突然把 agent 工具箱公开
 
-> “Hyperagents 不只是在学会完成任务，它们在学习如何改进自己。”——论文合作者 Jenny Zhang
+过去一年大家都想让大模型写 App，可是**环境配置、依赖安装、模拟器连接**这些「看似简单」的机械活总是把自动化流程卡死。Gemini、Claude、Codex 等 agent 被迫靠搜索旧文档来补课，结果不是装错 SDK 就是跑旧模板。
 
-眼下企业里的自改进 AI 大多卡在两个点：一靠人工写死的流程，二是只能在写代码这类「可验证」任务里练级。**Hyperagent 把整个程序都开放给模型自改**，意味着它可以把成功经验沉淀为可复用的「改进库」，随后迁移到审稿、机器人调参、奥数批卷这类非编码场景。
+> 谷歌这次给出的答案是：直接把「应该怎么做」写成 CLI 指令和技能卡，让任何代理都能照着执行。
 
-- 这让「多轮 prompt 微调」不再是唯一选项，系统本身会像创业公司一样总结 SOP。
-- 报告提到的 DGM-H（Darwin Gödel Machine + Hyperagent）在论文审核、机器人奖励设计上都压过了专用模型。
-- 当研究团队把在审稿、机器人上打磨出的 Hyperagent 丢去批改奥数题，它只用了 50 轮就达到 0.630 的改进分，而传统 DGM 一直停在 0.0。
+这波发布集中在三个组件：全新的 Android CLI、Android Skills 仓库，以及实时更新的 Android Knowledge Base。组合拳的核心，就是把「指令 + 最佳实践 + 最新文档」绑定在一起，避免 agent 乱猜。
 
-💡 这其实给企业数据团队传递了一个信号：**如果你能提供清晰的评价指标，AI 会反向帮你设计更高阶的自我优化流程**。
+## Android CLI 如何把 token 浪费砍掉 70%
 
-## 它到底改了什么机制
+先看 CLI。本质上它是一个面向 agent 的轻量入口：`android create` 几秒钟就生成官方模板，默认把推荐架构、Compose 配置、Gradle 版本一次带齐；`android sdk install` 只下必要组件，不再让 LLM 反复问「要不要装 platform-tools」。
 
-传统自改进系统里，「任务代理」负责干活，「元代理」审视并改写任务代理。Hyperagent 则把两者合体，允许系统在执行任务的同时，随时改动自己的改进管线——这被称为「元认知自修改」。
+更关键的是设备和运行命令：`android emulator`、`android run` 能直接创建虚拟机、安装 APK、回传日志。Agent 不用再摸索 GUI，脚本里就能搞定 build→deploy 全链路。
 
 ![配图](wechat_factory/05_assets/images/2026-04-17_INBOX_fig1.png)
 
-重点差异可以拆成三步：
+谷歌内部测试显示，有了这些命令，agent 完成「搭环境+起项目」的 token 消耗比传统方式少了 70%，时间缩短到原来的三分之一，还顺便解决了多人协作时「谁的 SDK 是最新的」这种经典问题。
 
-1. **开放自我引用**：任务逻辑、改进逻辑、评估逻辑都用可编辑的代码/脚本描述，模型能全局视角重写。
-2. **进化式档案**：系统会给表现好的「自己」存档，当作下一轮分支的种子，而不是只在一次迭代里决胜负。这避免陷入局部最优。
-3. **自建辅具**：在论文审稿实验里，Hyperagent 会自己写记忆组件、打分追踪器，甚至做预算管理——早期大刀阔斧，后期保守微调。
+## Skills + Knowledge Base 让 LLM 不跑偏
 
-换句话说，**它不是在任务上堆 prompt，而是在堆「改进本身」**。对业务团队而言，这意味着模型能为自己建工具链，你只要规定 KPI 与安全边界。
+CLI 管住了动作，但 LLM 仍需要任务书。为此，谷歌把技能写成了类似我们熟悉的 `SKILL.md`：当你触发「Navigation 3 迁移」「Edge-to-edge 适配」等需求时，agent 自动读到分步指令、风险提示和最佳依赖版本。开发者也能把自家规范塞进同一个仓库，让自定义技能和官方技能共存。
 
-## 普通企业能拿它干嘛
+另一个重要拼图是 Android Knowledge Base。它是一个可被 CLI、Android Studio 甚至独立 agent 调用的检索接口，涵盖 Android Docs、Firebase、Google Developers、Kotlin 最新文章。**哪怕 LLM 的训练数据已经停在去年，也能即时查到本周更新的指导**。
 
-很多团队看到 Meta 报告会觉得离自己很远，但文中的案例其实给了三条路径：
+> 简单理解：Skills 解决「怎么做」，Knowledge Base 解决「查什么」，两者叠加，agent 才不会胡乱引用旧方案。
 
-- **先挑可验证任务**：比如客服质检、合规审核、报价单校验——结果对错一眼能看出来的任务最适合当「孵化场」。
-- **让它参与流程搭建**：Hyperagent 在审稿场景里曾把朴素的「严格评审员」提示替换成三段式 checklist，并把每个阶段的错误写入记忆库。企业可以把这套思路借来，让模型参与写 SOP，再让人类验证。
-- **把「自我监控」外包**：它会自动建立性能追踪日志，帮团队记录每次策略变更是否带来收益，相当于内置 A/B 测试记录员。
+## 最终目的：把草稿带回 Android Studio 精修
+
+谷歌没打算让你永远离开 IDE。官方流程是：用 agent + CLI 快速搭建原型、跑通 CI，再把工程无缝拉进 Android Studio。新版 Studio 里自带 Agent 与 Planning Mode，可以在了解项目上下文的情况下继续写 UI、调试性能，还能通过 AI 驱动的 New Project Flow 快速生成新想法的脚手架。
 
 ![配图](wechat_factory/05_assets/images/2026-04-17_INBOX_fig2.png)
 
-当然，Meta 团队还是强调了安全红线。
-
-## 风险边界要怎么画
-
-⚠️ **进化速度超出人工理解**：系统自己改代码，审计就不能靠最终产出，需要在沙箱里设置资源配额、访问白名单，任何「出圈」的改动先过静态检查再上线。
-
-⚠️ **刷分风险**：Hyperagent 可能会「钻评测漏洞」，找到能拉高分、但无助目标的套路。做法是让评估指标多样化，并定期改题库，别让模型背题。
-
-⚠️ **职责转移**：团队的重心会从「写 prompt」变成「定义目标 + 审计改动」。这对组织结构是倒逼：**要有人真懂业务指标，也要有人懂控制面板**。
-
-> 核心不是 AI 能不能自我提升，而是谁来决定「值得追求的目标」。
+这意味着真实团队可以把「重复性劳动」交给 agent，把「体验打磨、跨设备适配」交回给开发者。最终产物依然是多端统一的高质量应用，而不是一次性 Demo。
 
 ---
 
 ## Action Items
 
-1. ✅ **先列出 2–3 个可量化、可快速验证的内部任务**，为 Hyperagent 试验准备好评分脚本和对照基线。
-2. ✅ **搭建沙箱式运行环境**，限定迭代次数、算力和外部接口，把「实验」与「真生产」隔离开。
-3. ✅ **成立跨职能审计组**（业务 + 算法 + 安全），统一记录每次自我改动、审计意见与上线门槛，防止模型私自「提权」。
+1. ✅ 立即访问 [d.android.com/tools/agents](https://d.android.com/tools/agents) 下载 Android CLI，并在脚本里测试 `android create`、`android run` 的串联效果。
+2. ✅ 克隆 [Android Skills 仓库](https://github.com/android/skills)，挑一两个与你团队痛点相符的技能，按模板写成自定义指令，让 agent 能执行公司规范。
+3. ✅ 在代理或 CI 流程里接入 Android Knowledge Base 检索，确保每次引用的 API/架构建议都是最新版本。
 
-如果这篇解读对你有启发，欢迎点赞、在看，也别忘了点关注，之后有类似 AI 工具打法会第一时间推送。对这种「自我进化」的 AI，你最担心的是什么？评论区聊聊。
+如果这篇对你有用，欢迎点赞、在看；想持续收到类似的 AI 工具解读，点个关注不迷路。你最想先让 agent 接管哪段 Android 流程？评论区聊聊看。
 
-## 参考与链接
-
-1. Meta researchers introduce 'hyperagents' to unlock self-improving AI for non-coding tasks｜VentureBeat（2026-04-16）: https://venturebeat.com/orchestration/meta-researchers-introduce-hyperagents-to-unlock-self-improving-ai-for-non-coding-tasks
+**来源**：[Android Developers Blog｜Build Android apps 3x faster using any agent](https://android-developers.googleblog.com/2026/04/build-android-apps-3x-faster-using-any-agent.html)
