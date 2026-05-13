@@ -4,7 +4,7 @@
 # Usage: ./scripts/run-inbox-wechat.sh <URL or path to text file>
 # Example: ./scripts/run-inbox-wechat.sh "https://example.com/article"
 # Example: ./scripts/run-inbox-wechat.sh wechat_factory/01_sources/web_snapshots/paste.txt
-# Requires: OpenClaw gateway running; ~/.gemini-env (GEMINI_API_KEY); ~/.wechat-env (WeChat credentials).
+# Requires: OpenClaw gateway running; OPENAI_API_KEY; ~/.wechat-env (WeChat credentials).
 set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE="$(cd "$SCRIPT_DIR/.." && pwd)"

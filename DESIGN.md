@@ -162,7 +162,7 @@ wechat_factory/
 1. **链接**：用浏览器/抓取工具打开 URL，将正文保存到 `01_sources/web_snapshots/`（或 PDF 到 `papers_pdf/`），解析后作为素材。
 2. **粘贴内容**：直接以用户提供的文本为素材，可选保存副本到 `01_sources/web_snapshots/` 以便追溯。
 3. **撰稿与落盘**：按 `article_style.md` 与模板写一篇 1500–2000 字文章，保存为 `04_output/YYYY-MM-DD/INBOX_article.md`。
-4. **可选**：对该篇运行配图脚本并上传草稿（与每日 3 篇共用同一套 `run-gemini-images.sh`、`wechat-draft-upload.sh`）。
+4. **可选**：对该篇运行配图脚本并上传草稿（与每日 3 篇共用同一套 `run-image-generation.sh`、`wechat-draft-upload.sh`）。
 
 详见 **skills/wechat-from-inbox/SKILL.md**；触发语示例：「写一篇公众号文章，来源是这个链接 / 以下内容。」
 

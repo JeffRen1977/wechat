@@ -1,33 +1,36 @@
 #!/usr/bin/env python3
 """
-Generate cover + 2--3 in-article images from a wechat_factory article using Gemini (Nano Banana).
+Generate cover + 2--3 in-article images from a wechat_factory article using OpenAI.
 Saves to wechat_factory/05_assets/images/ as YYYY-MM-DD_PREFIX_cover.png and YYYY-MM-DD_PREFIX_fig1.png etc.
-Requires: pip install google-genai; env GEMINI_API_KEY or GOOGLE_API_KEY.
+Requires: pip install openai; env OPENAI_API_KEY.
 Usage:
-  python scripts/gemini-gen-images.py wechat_factory/04_output/2026-03-15/MED_article.md
-  python scripts/gemini-gen-images.py wechat_factory/04_output/2026-03-15/MED_article.md --date 2026-03-15 --prefix MED
+  python scripts/image-generation.py wechat_factory/04_output/2026-03-15/MED_article.md
+  python scripts/image-generation.py wechat_factory/04_output/2026-03-15/MED_article.md --date 2026-03-15 --prefix MED
 """
 from __future__ import annotations
 
 import argparse
+import base64
 import os
 import re
 import sys
 from pathlib import Path
+from urllib.request import urlopen
 
 # Project root (parent of scripts/)
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT = SCRIPT_DIR.parent
 ASSETS_IMAGES = ROOT / "wechat_factory" / "05_assets" / "images"
 
-# Default model: Gemini 2.5 Flash Image (Nano Banana) for speed; or gemini-3.1-flash-image-preview (Nano Banana 2)
-GEMINI_IMAGE_MODEL = os.environ.get("GEMINI_IMAGE_MODEL", "gemini-2.5-flash-image")
+OPENAI_IMAGE_MODEL = os.environ.get("OPENAI_IMAGE_MODEL", "gpt-image-1")
+OPENAI_IMAGE_SIZE = os.environ.get("OPENAI_IMAGE_SIZE", "1024x1024")
+OPENAI_IMAGE_QUALITY = os.environ.get("OPENAI_IMAGE_QUALITY")
 
 
 def _load_env_files():
-    """Load KEY=value from ~/.gemini-env and ~/.wechat-env so GEMINI_API_KEY is available in cron/non-interactive runs."""
+    """Load KEY=value from local env files so API keys are available in cron/non-interactive runs."""
     home = Path.home()
-    for name in (".gemini-env", ".wechat-env"):
+    for name in (".openai-env", ".wechat-env", ".gemini-env"):
         path = home / name
         if not path.is_file():
             continue
@@ -46,12 +49,13 @@ def _load_env_files():
 
 
 def load_client():
-    api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
-        print("Set GEMINI_API_KEY or GOOGLE_API_KEY.", file=sys.stderr)
+        print("Set OPENAI_API_KEY, for example in ~/.openai-env or ~/.wechat-env.", file=sys.stderr)
         sys.exit(1)
-    from google import genai
-    return genai.Client(api_key=api_key)
+    from openai import OpenAI
+
+    return OpenAI(api_key=api_key)
 
 
 # Skip these H2s for fig prompts (not visual); still used as fallback if nothing else.
@@ -119,48 +123,58 @@ PREFIX_VISUAL = {
     ),
 }
 
-NO_TEXT_RULE = " Critical: do not include any text, words, letters, numbers, or characters in the image. The image must be purely visual: shapes, colors, figures, and composition only—no writing of any kind."
+NO_TEXT_RULE = (
+    " Critical: do not include any text, words, letters, numbers, or characters in the image. "
+    "The image must be purely visual: shapes, colors, figures, and composition only; no writing of any kind."
+)
 
 
 def generate_image(client, prompt: str, out_path: Path, style_hint: str = "clean, professional") -> bool:
-    full_prompt = f"{prompt} Style: {style_hint}, suitable for a WeChat official account article cover or inline figure.{NO_TEXT_RULE}"
+    full_prompt = (
+        f"{prompt} Style: {style_hint}, suitable for a WeChat official account article cover "
+        f"or inline figure.{NO_TEXT_RULE}"
+    )
+    kwargs = {
+        "model": OPENAI_IMAGE_MODEL,
+        "prompt": full_prompt,
+        "size": OPENAI_IMAGE_SIZE,
+        "n": 1,
+    }
+    if OPENAI_IMAGE_QUALITY:
+        kwargs["quality"] = OPENAI_IMAGE_QUALITY
+
     try:
-        response = client.models.generate_content(
-            model=GEMINI_IMAGE_MODEL,
-            contents=[full_prompt],
-        )
+        response = client.images.generate(**kwargs)
     except Exception as e:
         print(f"Generate failed: {e}", file=sys.stderr)
         return False
-    # Extract image from response (google-genai: response.candidates[0].content.parts or response.parts)
-    parts = getattr(response, "candidates", None)
-    if parts:
-        parts = parts[0].content.parts if parts else []
-    else:
-        parts = getattr(response, "parts", []) or []
-    for part in parts:
-        try:
-            if getattr(part, "as_image", None) is not None:
-                img = part.as_image()
-                img.save(str(out_path))
-                print(f"Saved: {out_path}")
-                return True
-        except Exception:
-            pass
-        if getattr(part, "inline_data", None) is not None:
-            data = getattr(part.inline_data, "data", None) or getattr(part.inline_data, "image", None)
-            if data:
-                raw = data if isinstance(data, bytes) else __import__("base64").b64decode(data)
-                out_path.write_bytes(raw)
-                print(f"Saved: {out_path}")
-                return True
-    print("No image in response.", file=sys.stderr)
+
+    data_items = getattr(response, "data", None) or []
+    if not data_items:
+        print("No image in response.", file=sys.stderr)
+        return False
+
+    image = data_items[0]
+    b64_json = getattr(image, "b64_json", None)
+    if b64_json:
+        out_path.write_bytes(base64.b64decode(b64_json))
+        print(f"Saved: {out_path}")
+        return True
+
+    url = getattr(image, "url", None)
+    if url:
+        with urlopen(url, timeout=120) as resp:
+            out_path.write_bytes(resp.read())
+        print(f"Saved: {out_path}")
+        return True
+
+    print("No image bytes or URL in response.", file=sys.stderr)
     return False
 
 
 def main():
     _load_env_files()
-    parser = argparse.ArgumentParser(description="Generate cover + 2-3 images from article MD via Gemini.")
+    parser = argparse.ArgumentParser(description="Generate cover + 2-3 images from article MD via OpenAI.")
     parser.add_argument("article_md", type=Path, help="Path to article Markdown, e.g. 04_output/YYYY-MM-DD/MED_article.md")
     parser.add_argument("--date", default=None, help="Date segment for filenames (default: from path)")
     parser.add_argument("--prefix", default=None, help="Prefix for filenames, e.g. MED (default: from article name)")
@@ -197,7 +211,7 @@ def main():
         f"Create one striking cover image for a WeChat article. "
         f"Title theme: {title_short!r}. "
         f"Subject domain: {topic_en}. "
-        f"Base the visual on specific subjects named in this excerpt (products, settings, metaphors — "
+        f"Base the visual on specific subjects named in this excerpt (products, settings, metaphors; "
         f"even if the excerpt is Chinese, interpret visually; no text in image): {context_snip!r}. "
         f"One clear hero scene, not a collage, cinematic composition, high detail."
     )
@@ -215,7 +229,7 @@ def main():
         fig_prompt = (
             f"Editorial illustration for a specific section of a Chinese WeChat article. "
             f"Read the excerpt and depict the MAIN concrete subject or metaphor (tools, people, charts as shapes, "
-            f"classroom, medical context, money/ledger abstraction — match the excerpt, not a generic stock photo). "
+            f"classroom, medical context, money/ledger abstraction; match the excerpt, not a generic stock photo). "
             f"Excerpt: {section_idea!r}. "
             f"Domain: {topic_en}. "
             f"Single focal subject, strong composition, no readable text in the image."

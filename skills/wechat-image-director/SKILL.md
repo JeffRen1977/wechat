@@ -1,11 +1,11 @@
 ---
 name: wechat_image_director
-description: Emotion-first image briefs — subject + composition + style + light; domain palettes; complements gemini-gen-images.py.
+description: Emotion-first image briefs - subject + composition + style + light; domain palettes; complements image-generation.py.
 ---
 
 # WeChat Image Director（视觉导演 / Image_Gen_Master）
 
-自动化仍走 `scripts/gemini-gen-images.py`（`run-gemini-images.sh`）。**在调用脚本之前**，先在稿子里定调，可显著提升质感。
+自动化仍走 `scripts/image-generation.py`（`run-image-generation.sh`）。**在调用脚本之前**，先在稿子里定调，可显著提升质感。
 
 ## 1. 先定「情绪」，再写画面（不要只丢一句「配张图」）
 
@@ -42,4 +42,4 @@ description: Emotion-first image briefs — subject + composition + style + ligh
 
 - 脚本会读取 **标题 + H2 段落文字** 拼 prompt；你在 brief 里想的 **情绪与关键词** 应体现在 **H2 行文** 中，脚本才能对齐。
 
-When images feel generic: refine H2 concrete nouns, re-run `./scripts/run-gemini-images.sh <article.md>`, or set `GEMINI_IMAGE_MODEL` env if needed.
+When images feel generic: refine H2 concrete nouns, re-run `./scripts/run-image-generation.sh <article.md>`, or set `OPENAI_IMAGE_MODEL` env if needed.

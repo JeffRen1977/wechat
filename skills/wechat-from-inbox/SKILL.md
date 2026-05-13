@@ -53,7 +53,7 @@ Write **one** article (**1500–2000 字**, same style as the daily pipeline) �
 You **must** run this command from the **workspace root** (the repo root containing `wechat_factory/` and `scripts/`):
 
 ```bash
-./scripts/run-gemini-images.sh wechat_factory/04_output/YYYY-MM-DD/INBOX_article.md
+./scripts/run-image-generation.sh wechat_factory/04_output/YYYY-MM-DD/INBOX_article.md
 ```
 
 Replace YYYY-MM-DD with the same date used in step 4. This creates:
@@ -62,7 +62,7 @@ Replace YYYY-MM-DD with the same date used in step 4. This creates:
 - `wechat_factory/05_assets/images/YYYY-MM-DD_INBOX_fig1.png`
 - `wechat_factory/05_assets/images/YYYY-MM-DD_INBOX_fig2.png`
 
-Requires `~/.gemini-env` with `GEMINI_API_KEY`. If the command fails, report the error and do not skip.
+Requires `OPENAI_API_KEY` in `~/.openai-env` or `~/.wechat-env`. If the command fails, report the error and do not skip.
 
 ---
 

@@ -2,7 +2,7 @@
 # End-to-end daily pipeline: web search → parse → 3 articles (EDU, MED, FIN) → 1 cover + 2 images per article → upload to WeChat draft.
 # Usage: ./scripts/run-daily-wechat.sh
 # Cron: 0 8 * * * /home/renjeff/Documents/projects/wechat/scripts/run-daily-wechat.sh
-# Requires: OpenClaw gateway running; ~/.gemini-env (GEMINI_API_KEY); ~/.wechat-env (WECHAT_APPID, WECHAT_SECRET).
+# Requires: OpenClaw gateway running; OPENAI_API_KEY; ~/.wechat-env (WECHAT_APPID, WECHAT_SECRET).
 set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE="$(cd "$SCRIPT_DIR/.." && pwd)"

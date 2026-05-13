@@ -3,7 +3,7 @@
 If a daily article .md has no ![...](..._fig1.png) / fig2.png, insert them after the 1st and 2nd ## sections
 so Pandoc emits <img> and wechat-draft-upload can upload body images.
 
-Run after gemini-gen-images (files exist) and before wechat-draft-upload.
+Run after image-generation (files exist) and before wechat-draft-upload.
 Usage: python3 scripts/ensure_article_image_refs.py <path/to/EDU_article.md>
 """
 from __future__ import annotations

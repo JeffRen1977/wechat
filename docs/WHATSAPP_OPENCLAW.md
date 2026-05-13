@@ -38,10 +38,10 @@ When you send **one link** or **pasted content** in WhatsApp, the agent should:
 
 1. **Fetch** the link (or use the pasted text).
 2. **Write** one article to `wechat_factory/04_output/YYYY-MM-DD/INBOX_article.md`.
-3. **Generate** 1 cover + 2 figures via `./scripts/run-gemini-images.sh .../INBOX_article.md`.
+3. **Generate** 1 cover + 2 figures via `./scripts/run-image-generation.sh .../INBOX_article.md`.
 4. **Upload** to the WeChat draft box via `./scripts/wechat-draft-upload.sh YYYY-MM-DD`.
 
-The agent follows **skills/wechat-from-inbox/SKILL.md**. Ensure `~/.gemini-env` (GEMINI_API_KEY) and `~/.wechat-env` (WeChat credentials) are set.
+The agent follows **skills/wechat-from-inbox/SKILL.md**. Ensure `OPENAI_API_KEY` is set in `~/.openai-env` or `~/.wechat-env`, and WeChat credentials are set in `~/.wechat-env`.
 
 ### Test without WhatsApp
 

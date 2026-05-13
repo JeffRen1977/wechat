@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # For a given day: generate 1 cover + 2 content images per article, then upload all to WeChat draft.
 # Usage: ./scripts/generate-images-and-upload.sh [YYYY-MM-DD]
-#   If no date, uses today. Requires ~/.gemini-env (GEMINI_API_KEY) and ~/.wechat-env (WeChat credentials).
+#   If no date, uses today. Requires OPENAI_API_KEY and ~/.wechat-env (WeChat credentials).
 set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -21,7 +21,7 @@ fi
 for md in "$OUT_DIR"/*.md; do
   [[ -f "$md" ]] || continue
   echo "[$(date -Iseconds)] Images for $(basename "$md")" >> "$LOG"
-  ./scripts/run-gemini-images.sh "$md" >> "$LOG" 2>&1 || true
+  ./scripts/run-image-generation.sh "$md" >> "$LOG" 2>&1 || true
   # Body images only appear in WeChat if Markdown contains ![...](..._figN.png); agents often omit them.
   python3 "$SCRIPT_DIR/ensure_article_image_refs.py" "$md" >> "$LOG" 2>&1 || true
 done

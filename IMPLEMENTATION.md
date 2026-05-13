@@ -503,25 +503,25 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 - **03_templates/viral_titles.txt**：已加入多条高点击标题句式，每行一句；Agent 可据此生成并择优。
 - **03_templates/article_style.md**：已规定单 H1、H2/H3、段落/加粗/引用/列表、配图路径（`05_assets/images/`），与 DESIGN、PUBLISHING 一致。
 
-**4.5 图像生成（Gemini Nano Banana）**
+**4.5 图像生成（OpenAI Images）**
 
-- 文章写入 `04_output/YYYY-MM-DD/*.md` 后，可用 **Gemini 原生图像生成（Nano Banana）** 自动生成 **1 张封面 + 2～3 张正文配图**，落地到 `05_assets/images/`，供公众号上传使用。
-- **脚本**：`scripts/gemini-gen-images.py`
-  - 依赖：`pip install -r requirements.txt`（`google-genai`、`Pillow`）；环境变量 **GEMINI_API_KEY** 或 **GOOGLE_API_KEY**。**若由 OpenClaw Agent 调用本脚本**：Agent 执行时不会加载 `~/.bashrc`，因此必须将密钥放在 **`~/.gemini-env`**（如 `export GEMINI_API_KEY=...`），脚本会自动读取；仅在本机终端手动运行时可用 `~/.bashrc`。
-  - 默认模型：`gemini-2.5-flash-image`（Nano Banana）；可通过 `GEMINI_IMAGE_MODEL` 改为 `gemini-3.1-flash-image-preview`（Nano Banana 2）等。
+- 文章写入 `04_output/YYYY-MM-DD/*.md` 后，可用 **OpenAI 图像生成** 自动生成 **1 张封面 + 2～3 张正文配图**，落地到 `05_assets/images/`，供公众号上传使用。
+- **脚本**：`scripts/image-generation.py`
+  - 依赖：`pip install -r requirements.txt`（`openai`）；环境变量 **OPENAI_API_KEY**。**若由 OpenClaw Agent 调用本脚本**：Agent 执行时不会加载 `~/.bashrc`，因此建议将密钥放在 **`~/.openai-env`** 或 **`~/.wechat-env`**（如 `export OPENAI_API_KEY=...`），脚本会自动读取；仅在本机终端手动运行时可用 `~/.bashrc`。
+  - 默认模型：`gpt-image-1`；可通过 `OPENAI_IMAGE_MODEL`、`OPENAI_IMAGE_SIZE`、`OPENAI_IMAGE_QUALITY` 调整。
   - 用法示例：
     ```bash
     # 从文章路径自动推断日期与前缀（如 2026-03-15, MED）
-    python scripts/gemini-gen-images.py wechat_factory/04_output/2026-03-15/MED_article.md
+    python scripts/image-generation.py wechat_factory/04_output/2026-03-15/MED_article.md
     # 指定日期与前缀、正文配图数量
-    python scripts/gemini-gen-images.py wechat_factory/04_output/2026-03-15/MED_article.md --date 2026-03-15 --prefix MED --num-figs 3
+    python scripts/image-generation.py wechat_factory/04_output/2026-03-15/MED_article.md --date 2026-03-15 --prefix MED --num-figs 3
     # 仅打印将使用的 prompt，不调 API
-    python scripts/gemini-gen-images.py wechat_factory/04_output/2026-03-15/MED_article.md --dry-run
+    python scripts/image-generation.py wechat_factory/04_output/2026-03-15/MED_article.md --dry-run
     ```
   - 产出：`05_assets/images/YYYY-MM-DD_PREFIX_cover.png`、`YYYY-MM-DD_PREFIX_fig1.png`、`fig2.png`（及可选 fig3）。封面可直接被 `wechat-draft-upload.sh` 使用；正文配图可在 Markdown 中引用或在转 HTML 后由发布流程上传。
   - **中文说明**：脚本使用**英文 prompt** 且要求**图像中不出现任何文字/字符**，避免模型渲染中文时出错；配图按领域前缀（MED/FIN/EDU）生成主题，不把文章中文标题或段落传入图像描述。
-- **与流水线衔接**：可在 OpenClaw 完成撰稿并写入 04_output 后，由 Cron 或人工执行上述脚本，再运行 `wechat-draft-upload.sh`；也可在 Agent 指令中约定「撰稿完成后调用 `scripts/gemini-gen-images.py` 生成封面与配图」。
-- **每篇 1 封面 + 2 配图并上传公众号**：使用 **`scripts/generate-images-and-upload.sh [YYYY-MM-DD]`**。该脚本会：对当日 `04_output/YYYY-MM-DD/` 下每篇 .md 调用 `run-gemini-images.sh`（生成 1 封面 + 2 张 fig1/fig2），然后执行 `wechat-draft-upload.sh` 将全部文章上传到公众号草稿箱。需配置 `~/.gemini-env`（GEMINI_API_KEY）与 `~/.wechat-env`（公众号凭证）。Cron 可在每日 8:00 流水线之后（如 9:00）执行此脚本，实现「3 篇（EDU/MED/FIN）→ 每篇 3 图 → 上传草稿」一条龙。
+- **与流水线衔接**：可在 OpenClaw 完成撰稿并写入 04_output 后，由 Cron 或人工执行上述脚本，再运行 `wechat-draft-upload.sh`；也可在 Agent 指令中约定「撰稿完成后调用 `scripts/image-generation.py` 生成封面与配图」。
+- **每篇 1 封面 + 2 配图并上传公众号**：使用 **`scripts/generate-images-and-upload.sh [YYYY-MM-DD]`**。该脚本会：对当日 `04_output/YYYY-MM-DD/` 下每篇 .md 调用 `run-image-generation.sh`（生成 1 封面 + 2 张 fig1/fig2），然后执行 `wechat-draft-upload.sh` 将全部文章上传到公众号草稿箱。需配置 `OPENAI_API_KEY` 与 `~/.wechat-env`（公众号凭证）。Cron 可在每日 8:00 流水线之后（如 9:00）执行此脚本，实现「3 篇（EDU/MED/FIN）→ 每篇 3 图 → 上传草稿」一条龙。
 
 ---
 
@@ -599,8 +599,8 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 
 - **若 Agent 仍回复「无图像生成工具」**：在对话中直接粘贴以下指令，要求 Agent **执行**该命令：  
   **请执行以下命令生成 5.2 测试封面图（会生成 cover 与 fig1、fig2，可任选其一作为 5.2_test_cover）：**  
-  `./scripts/run-gemini-images.sh wechat_factory/04_output/2026-03-15/MED_article.md`  
-  脚本会从 `~/.gemini-env` 读取 GEMINI_API_KEY；若报错缺 Key，请在服务器上执行 `echo 'export GEMINI_API_KEY=你的key' >> ~/.gemini-env && chmod 600 ~/.gemini-env`。
+  `./scripts/run-image-generation.sh wechat_factory/04_output/2026-03-15/MED_article.md`  
+  脚本会从 `~/.openai-env` 或 `~/.wechat-env` 读取 OPENAI_API_KEY；若报错缺 Key，请在服务器上执行 `echo 'export OPENAI_API_KEY=你的key' >> ~/.openai-env && chmod 600 ~/.openai-env`。
 - 若某步报错：记下工具名与报错信息，便于排查（如搜索无 API、浏览器未启用、写盘权限等）。路径均相对于 workspace 根（项目目录）。
 
 **5.3 日产出测试**
@@ -732,7 +732,7 @@ OpenClaw 2026.3.13 不支持 `agents.list` 中的 `instructions` 键，且单 Ag
 | **推荐 MCP / 实现** | **dalle-node**、**flux-mcp** 或其它 Image Gen 类 MCP；若 OpenClaw 有内置 `image` 工具且支持文生图，也可使用。 |
 | **配置要点** | 在 `mcpServers` 中配置对应 Image MCP，传入 API Key 或本地模型地址；在 TOOLS.md 中约定输出目录为 `wechat_factory/05_assets/images/` 及命名规则（如 `YYYY-MM-DD_MED_cover.png`）。 |
 | **TOOLS.md 建议描述** | “Image Gen：根据文章标题或摘要生成一张科技感封面图，保存到 wechat_factory/05_assets/images/，文件名含日期与领域标识。” |
-| **本项目脚本** | 使用 Gemini（Nano Banana）时，可运行 `scripts/gemini-gen-images.py <article.md>` 生成 1 封面 + 2～3 张配图；见 4.5。 |
+| **本项目脚本** | 使用 OpenAI Images 时，可运行 `scripts/image-generation.py <article.md>` 生成 1 封面 + 2～3 张配图；见 4.5。 |
 
 ---
 
