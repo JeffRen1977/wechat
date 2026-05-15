@@ -14,6 +14,7 @@ DATE="${1:-$(date +%Y-%m-%d)}"
 OUT_DIR="$ROOT/wechat_factory/04_output/$DATE"
 IMG_DIR="$ROOT/wechat_factory/05_assets/images"
 LOG="${LOG:-/tmp/wechat-draft-upload.log}"
+DAILY_ARTICLES_ONLY="${DAILY_ARTICLES_ONLY:-0}"
 
 if [[ ! -d "$OUT_DIR" ]]; then
   echo "Missing $OUT_DIR. Run pipeline first or pass YYYY-MM-DD." >> "$LOG"
@@ -79,7 +80,13 @@ find_cover() {
   return 1
 }
 
-for md in "$OUT_DIR"/*.md; do
+if [[ "$DAILY_ARTICLES_ONLY" == "1" ]]; then
+  articles=("$OUT_DIR/EDU_article.md" "$OUT_DIR/MED_article.md" "$OUT_DIR/FIN_article.md")
+else
+  articles=("$OUT_DIR"/*.md)
+fi
+
+for md in "${articles[@]}"; do
   [[ -f "$md" ]] || continue
   base=$(basename "$md" .md)
   prefix="${base%_article}"

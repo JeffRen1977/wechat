@@ -8,6 +8,7 @@ ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 DATE="${1:-$(date +%Y-%m-%d)}"
 OUT_DIR="$ROOT/wechat_factory/04_output/$DATE"
 LOG="${LOG:-/tmp/wechat-images-upload.log}"
+DAILY_ARTICLES_ONLY="${DAILY_ARTICLES_ONLY:-0}"
 
 echo "[$(date -Iseconds)] Generating images for $DATE (1 cover + 2 figs per article), then uploading." >> "$LOG"
 cd "$ROOT"
@@ -18,7 +19,13 @@ if [[ ! -d "$OUT_DIR" ]]; then
   exit 1
 fi
 
-for md in "$OUT_DIR"/*.md; do
+if [[ "$DAILY_ARTICLES_ONLY" == "1" ]]; then
+  articles=("$OUT_DIR/EDU_article.md" "$OUT_DIR/MED_article.md" "$OUT_DIR/FIN_article.md")
+else
+  articles=("$OUT_DIR"/*.md)
+fi
+
+for md in "${articles[@]}"; do
   [[ -f "$md" ]] || continue
   echo "[$(date -Iseconds)] Images for $(basename "$md")" >> "$LOG"
   ./scripts/run-image-generation.sh "$md" >> "$LOG" 2>&1 || true
@@ -28,6 +35,10 @@ done
 
 echo "[$(date -Iseconds)] Uploading to WeChat draft." >> "$LOG"
 [[ -f "$HOME/.wechat-env" ]] && source "$HOME/.wechat-env"
-./scripts/wechat-draft-upload.sh "$DATE" >> "$LOG" 2>&1 || true
+if [[ "$DAILY_ARTICLES_ONLY" == "1" ]]; then
+  DAILY_ARTICLES_ONLY=1 ./scripts/wechat-draft-upload.sh "$DATE" >> "$LOG" 2>&1
+else
+  ./scripts/wechat-draft-upload.sh "$DATE" >> "$LOG" 2>&1
+fi
 echo "[$(date -Iseconds)] Done. Check $LOG and WeChat draft box." >> "$LOG"
 echo "Done. Check $LOG and WeChat draft box."
